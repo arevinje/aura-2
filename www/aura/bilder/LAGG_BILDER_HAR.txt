@@ -1,0 +1,2 @@
+Lägg dina egna bilder här (rum, startsidan, egna lampbilder).
+I Home Assistant ska mappen heta config/www/aura/bilder/ – då räcker det att skriva filnamnet i mitt_hem, t.ex. bild: vardagsrum.jpg

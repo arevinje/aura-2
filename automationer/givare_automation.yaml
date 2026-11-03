@@ -1,0 +1,136 @@
+# ════════════════════════════════════════════════════════════════════════════
+#  VATTENLÄCKA, BRAND OCH GAS – röst, notiser och huvudkran            version 1
+#
+#  Lägg in den så här:
+#    Inställningar → Automationer och scener → Skapa automation → Skapa ny
+#    → ⋮ uppe till höger → Redigera i YAML → markera allt → klistra in → Spara
+#
+#  Ändra bara raderna under "variables:" (markerade med ← ÄNDRA)
+#  och givarna under "triggers:" (samma som _larmgivare i Aura).
+#
+#  Det här händer när en givare larmar:
+#    • Högtalaren säger vad som hänt och var – och upprepar tills givaren slutar larma
+#    • Telefonerna får en kritisk notis som hörs även i tyst läge
+#    • Vid vattenläcka stängs huvudkranen automatiskt (om du har en ventil)
+#    • När givaren slutat larma kommer en lugnande notis
+# ════════════════════════════════════════════════════════════════════════════
+alias: Larm – vattenläcka, brand och gas
+description: Röst, kritiska notiser och huvudkran när en vatten-, brand- eller gasgivare larmar.
+mode: parallel
+max: 10
+
+triggers:
+  - trigger: state
+    entity_id:                                     # ← ÄNDRA: dina givare
+      - binary_sensor.vattenlacka_tvatt
+      - binary_sensor.brandvarnare_kok
+    to: "on"
+    id: larmar
+  - trigger: state
+    entity_id:                                     # ← samma givare igen
+      - binary_sensor.vattenlacka_tvatt
+      - binary_sensor.brandvarnare_kok
+    from: "on"
+    to: "off"
+    id: upphort
+
+variables:
+  hogtalare: media_player.vardagsrum_3             # ← ÄNDRA vid behov
+  rost: tts.google_ai_tts                          # ← ÄNDRA vid behov
+  telefoner:                                       # ← ÄNDRA: helst notify.mobile_app_…
+    - notify.mobile_app_din_telefon
+  huvudkran: ""                                    # ← t.ex. valve.huvudkran eller switch.vattenventil – tomt = ingen
+  stang_automatiskt: true                          # stäng huvudkranen direkt vid vattenläcka
+  volym: 0.9
+  givare: "{{ trigger.entity_id }}"
+  namn: "{{ state_attr(givare, 'friendly_name') or givare }}"
+  dc: "{{ state_attr(givare, 'device_class') or '' }}"
+  typ: >-
+    {% set t = (givare ~ ' ' ~ namn) | lower %}
+    {% if dc == 'moisture' or 'vatten' in t or 'leak' in t or 'läcka' in t %}vatten
+    {% elif dc == 'carbon_monoxide' or 'kolmonoxid' in t %}co
+    {% elif dc == 'gas' or 'gas' in t %}gas
+    {% else %}brand{% endif %}
+  rubrik: "{{ {'vatten': '💧 Vattenläcka', 'brand': '🔥 Brandlarm', 'gas': '⚠️ Gaslarm', 'co': '⚠️ Kolmonoxid'}[typ | trim] }}"
+  meddelande: >-
+    {{ {'vatten': 'Varning! Vatten har upptäckts', 'brand': 'Varning! Brandvarnaren larmar', 'gas': 'Varning! Gas har upptäckts',
+        'co': 'Varning! Kolmonoxid har upptäckts'}[typ | trim] }} – {{ namn }}.
+  notis_entiteter: "{{ states.notify | map(attribute='entity_id') | list }}"
+
+actions:
+  - choose:
+      # ── Givaren larmar ──
+      - conditions: [{ condition: trigger, id: larmar }]
+        sequence:
+          - parallel:
+              # Huvudkranen
+              - if: "{{ typ | trim == 'vatten' and huvudkran != '' and stang_automatiskt }}"
+                then:
+                  - action: >-
+                      {{ 'valve.close_valve' if huvudkran.startswith('valve.') else 'cover.close_cover' if huvudkran.startswith('cover.') else 'homeassistant.turn_off' }}
+                    target: { entity_id: "{{ huvudkran }}" }
+                    continue_on_error: true
+              # Notiser till telefonerna
+              - repeat:
+                  for_each: "{{ telefoner }}"
+                  sequence:
+                    - if: "{{ repeat.item in notis_entiteter }}"
+                      then:
+                        - action: notify.send_message
+                          target: { entity_id: "{{ repeat.item }}" }
+                          data: { title: "{{ rubrik }}", message: "{{ meddelande }}" }
+                          continue_on_error: true
+                      else:
+                        - action: "{{ repeat.item }}"
+                          data:
+                            title: "{{ rubrik }}"
+                            message: >-
+                              {{ meddelande }}{{ ' Huvudkranen har stängts.' if typ | trim == 'vatten' and huvudkran != '' and stang_automatiskt else '' }}
+                            data:
+                              tag: givare-{{ givare }}
+                              push: { sound: { name: default, critical: 1, volume: 1.0 } }
+                              ttl: 0
+                              priority: high
+                              channel: alarm_stream
+                          continue_on_error: true
+              # Rösten – upprepas var 30:e sekund tills givaren slutar larma (högst 10 gånger)
+              - sequence:
+                  - action: media_player.volume_set
+                    target: { entity_id: "{{ hogtalare }}" }
+                    data: { volume_level: "{{ volym }}" }
+                    continue_on_error: true
+                  - repeat:
+                      while:
+                        - condition: template
+                          value_template: "{{ is_state(givare, 'on') and repeat.index <= 10 }}"
+                      sequence:
+                        - action: tts.speak
+                          target: { entity_id: "{{ rost }}" }
+                          data:
+                            media_player_entity_id: "{{ hogtalare }}"
+                            message: >-
+                              {{ meddelande }}{{ ' Huvudkranen har stängts.' if typ | trim == 'vatten' and huvudkran != '' and stang_automatiskt and repeat.index == 1 else '' }}
+                              {{ ' Lämna huset och ring 112.' if typ | trim in ['brand', 'gas', 'co'] else '' }}
+                          continue_on_error: true
+                        - delay: { seconds: 30 }
+
+      # ── Givaren har slutat larma ──
+      - conditions: [{ condition: trigger, id: upphort }]
+        sequence:
+          - repeat:
+              for_each: "{{ telefoner }}"
+              sequence:
+                - if: "{{ repeat.item in notis_entiteter }}"
+                  then:
+                    - action: notify.send_message
+                      target: { entity_id: "{{ repeat.item }}" }
+                      data: { title: "✅ {{ namn }}", message: "Givaren har slutat larma." }
+                      continue_on_error: true
+                  else:
+                    - action: "{{ repeat.item }}"
+                      data:
+                        title: "✅ {{ namn }}"
+                        message: >-
+                          Givaren har slutat larma.{{ ' Kom ihåg att öppna huvudkranen när läckan är åtgärdad.' if typ | trim == 'vatten' and huvudkran != '' else '' }}
+                        data: { tag: "givare-{{ givare }}" }
+                      continue_on_error: true

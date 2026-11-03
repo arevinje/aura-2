@@ -1,0 +1,106 @@
+# ═══════════════════════════════════════════════════════════════
+#  Spabad – planerat bad (Aura)
+#  Läggs in under Inställningar → Automationer och scener → Skapa automation
+#  → ⋮ → Redigera i YAML. Klistra in allt nedanför och spara.
+#
+#  Gör så här:
+#   • Spabadet står på Standard och hålls på lägsta temperatur (35°) mellan baden.
+#   • 2 timmar före badet sätts temperaturen du valde i Aura.
+#   • 3 timmar efter badtiden går det tillbaka till lägsta temperatur.
+#     (Står det på Borta när värmen ska starta byts det till Standard.)
+#   • Är "Varje vecka" påslaget flyttas badet automatiskt en vecka fram.
+#   • Måltemperaturen går aldrig under "lägsta temperatur" (35° om inget annat
+#     är valt). Sänker någon den i appen höjs den direkt igen.
+#
+#  Behöver hjälpare (Inställningar → Enheter och tjänster → Hjälpare):
+#   • input_datetime.spa_bad              Datum och tid  ("Datum och tid" ska vara valt)
+#   • input_number.spa_bad_temp           Nummer, 30–40, steg 0.5
+#   • input_boolean.spa_bad_varje_vecka   Växla (Toggle)
+#   • input_number.spa_min_temp           Nummer, 20–40, steg 0.5, startvärde 35
+#                                         (lägsta temperatur – ändras med kugghjulet i Aura)
+#
+#  Ändra raderna under "variables" så att de stämmer med ditt spabad.
+#  Lägets exakta namn ser du under Utvecklarverktyg → Tillstånd →
+#  select.fridkulla_watercare_mode → attributet options.
+#  Ändrar du forvarm/efter här, ändra samma sak under _spa i mitt_hem.
+# ═══════════════════════════════════════════════════════════════
+alias: Spabad – planerat bad
+description: Värmer spabadet inför ett planerat bad och går tillbaka till lägsta temperatur efteråt (Aura)
+mode: queued
+trigger_variables:
+  forvarm: 2        # timmar före badet som värmen startar
+  efter: 3          # timmar efter badet innan det går tillbaka till energisnålt
+variables:
+  termostat: climate.fridkulla_thermostat_1
+  lage: select.fridkulla_watercare_mode
+  standard: Standard
+  minsta: "{{ states('input_number.spa_min_temp') | float(35) }}"
+  temp: "{{ [states('input_number.spa_bad_temp') | float(38), states('input_number.spa_min_temp') | float(35)] | max }}"
+triggers:
+  # Dags att börja värma (slår till direkt om badet planeras med mindre än 2 h kvar)
+  - trigger: template
+    id: start
+    value_template: >
+      {% set b = state_attr('input_datetime.spa_bad', 'timestamp') %}
+      {{ b is number and b - forvarm * 3600 <= now().timestamp() < b + efter * 3600 }}
+  # Badet är över – tillbaka till lägsta temperatur
+  - trigger: template
+    id: slut
+    value_template: >
+      {% set b = state_attr('input_datetime.spa_bad', 'timestamp') %}
+      {{ b is number and b + efter * 3600 <= now().timestamp() < b + (efter + 1) * 3600 }}
+  # Temperaturen ändras medan spabadet redan värmer inför badet
+  - trigger: state
+    id: temp
+    entity_id: input_number.spa_bad_temp
+  # Lägsta temperatur: någon sänkte målet för lågt, eller gränsen höjdes
+  - trigger: state
+    id: minsta
+    entity_id: climate.fridkulla_thermostat_1
+    attribute: temperature
+  - trigger: state
+    id: minsta
+    entity_id: input_number.spa_min_temp
+conditions:
+  - condition: template
+    value_template: >
+      {% set b = state_attr('input_datetime.spa_bad', 'timestamp') %}
+      {{ trigger.id != 'temp' or (b is number and b - forvarm * 3600 <= now().timestamp() < b + efter * 3600) }}
+actions:
+  - choose:
+      - conditions: "{{ trigger.id in ['start', 'temp'] }}"
+        sequence:
+          - action: select.select_option
+            target:
+              entity_id: "{{ lage }}"
+            data:
+              option: "{{ standard }}"
+          - action: climate.set_temperature
+            target:
+              entity_id: "{{ termostat }}"
+            data:
+              temperature: "{{ temp }}"
+      - conditions: "{{ trigger.id == 'minsta' and (state_attr(termostat, 'temperature') | float(99)) < minsta }}"
+        sequence:
+          - action: climate.set_temperature
+            target:
+              entity_id: "{{ termostat }}"
+            data:
+              temperature: "{{ minsta }}"
+      - conditions: "{{ trigger.id == 'slut' }}"
+        sequence:
+          - action: climate.set_temperature
+            target:
+              entity_id: "{{ termostat }}"
+            data:
+              temperature: "{{ minsta }}"
+          - if:
+              - condition: state
+                entity_id: input_boolean.spa_bad_varje_vecka
+                state: "on"
+            then:
+              - action: input_datetime.set_datetime
+                target:
+                  entity_id: input_datetime.spa_bad
+                data:
+                  timestamp: "{{ state_attr('input_datetime.spa_bad', 'timestamp') + 7 * 86400 }}"

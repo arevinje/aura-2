@@ -1,0 +1,419 @@
+# ════════════════════════════════════════════════════════════════════════════
+#  AURA – ett helt nytt utseende för Home Assistant
+#  Kräver bara: custom:button-card (HACS). Kiosk-mode är valfritt.
+#
+#  Klistra in allt i en NY dashboard:
+#    Inställningar → Instrumentpaneler → Lägg till → "Ny instrumentpanel från början"
+#    → öppna den → ⋮ → Redigera → ⋮ → Raw-konfigurationsredigerare → klistra in → Spara
+#
+#  Allt som är unikt för ditt hem ändrar du i "mitt_hem" här nedanför.
+# ════════════════════════════════════════════════════════════════════════════
+kiosk_mode:
+  mobile_settings:
+    custom_width: 1400
+    hide_header: true
+button_card_templates:
+  mitt_hem:
+    variables:
+      # ---------- Utseende ----------
+      _hem_namn: Symfonigatan 7
+      _plats: Borås
+      _tema: ljus                 # ljus (kräm & brons), mork (marin & indigo) eller noir (svart & champagne) – kan även bytas under Hushåll
+      _accent: ''                 # tomt = temats egen färg, annars t.ex. '#B07D3A' eller '#7568FF'
+      _bakgrundsbild: oversikt.webp  # bilden överst på Hem – filen ligger i config/www/aura/bilder/. Tomt = mönster
+
+      # ---------- Rum och lampor ----------
+      # Varje rum blir ett kort på Hem och en egen rad med lamprutor under Ljus.
+      # Lampor kan skrivas bara som entitet, eller med eget namn/ikon.
+      # Tom lista (_rum: []) = rummen och lamporna hämtas automatiskt från dina områden i HA.
+      _rum:
+        - namn: Vardagsrum
+          bild: vardagsrum.webp  # egen bild för rummet (filen i config/www/aura/bilder/)
+          ikon: mdi:sofa-outline
+          temp: sensor.temp_vardagsrum_temperatur
+          fukt: sensor.temp_vardagsrum_luftfuktighet
+          lampor:
+            - entity: light.shellydimmer2_e8db84d44d28
+              namn: Sofflampan
+              ikon: mdi:sofa-outline
+              typ: krona               # bilden: tak, pendel, plafond, klot, krona, spot, golv, bord, skrivbord, vagg, glod, led, stake, gran, mane, uttag – eller egen bild, t.ex. min_lampa.png i config/www/aura/bilder/
+            - entity: light.golvlampa
+              namn: Golvlampa
+              ikon: mdi:floor-lamp-outline
+            - entity: light.fonsterlampor_nere
+              namn: Fönsterlampor
+              ikon: mdi:lamps
+              typ: bord
+            - entity: switch.vaggkontakt
+              namn: Väggplugg
+              ikon: mdi:power-socket-eu
+        - namn: Kök & hall
+          bild: kok.webp
+          ikon: mdi:silverware-fork-knife
+          lampor:
+            - entity: light.koksbordet
+              namn: Köksbordet
+              ikon: mdi:ceiling-light
+            - entity: light.hallbelysning
+              namn: Hallen
+              ikon: mdi:coat-rack
+              typ: klot
+            - entity: switch.fonsterlampa3_uttag
+              namn: Fönsterlampa Kök
+              ikon: mdi:lamp-outline
+              typ: bord
+        - namn: Övervåningen
+          bild: overvaning.webp
+          ikon: mdi:bed-outline
+          temp: sensor.temp_overvaningen_temperatur
+          fukt: sensor.temp_overvaningen_luftfuktighet
+          lampor:
+            - entity: light.melvins_sanglampa
+              namn: Melvins lampa
+              ikon: mdi:lamp-outline
+            - entity: switch.fonster_sovrum_uttag
+              namn: Fönster sovrum
+              ikon: mdi:window-closed-variant
+            - entity: switch.manen_uttag
+              namn: Månen
+              ikon: mdi:moon-waning-crescent
+            - entity: light.bw_lt31
+              namn: Ledlist Melvins sovrum
+              ikon: mdi:led-strip-variant
+              typ: led
+
+      # ---------- Scener och ljuseffekter ----------
+      _scener:                    # tom lista = alla scener
+        - entity: scene.mysbelysning
+          namn: Mys
+          ikon: mdi:candle
+          farg: '#FBBF24'
+        - entity: scene.middagsbelysning
+          namn: Middag
+          ikon: mdi:silverware-fork-knife
+          farg: '#FB923C'
+        - entity: scene.filmbelysning
+          namn: Film
+          ikon: mdi:movie-open-outline
+          farg: '#22D3EE'
+        - entity: scene.god_natt
+          namn: God natt
+          ikon: mdi:weather-night
+          farg: '#A78BFA'
+      _slack_allt: script.slack_allt_om_5_minuter
+      _slack_minuter: 5
+      _ljuseffekt: input_select.ljuseffekt
+      _ljuseffekt_script: script.ljuseffekt_knapp
+      _ljuseffekter:              # tom lista = ingen rad med effekter
+        - effekt: norrsken
+          namn: Norrsken
+          ikon: mdi:weather-night
+        - effekt: stamning
+          namn: Stämning
+          ikon: mdi:candle
+        - effekt: fargsnurr
+          namn: Färgsnurr
+          ikon: mdi:palette
+
+      _party_script: script.partylage   # Partyläge under Ljuseffekter (lägg in party_script.yaml) – tomt = ingen knapp
+      _party_lampor:              # tom lista [] = alla färglampor i dina rum
+        - light.golvlampa
+        - light.koksbordet
+        - light.hallbelysning
+        - light.vardagsrum_fonster
+
+      # ---------- Media ----------
+      _mediaspelare:              # en eller flera – tom lista = alla mediaspelare
+        - media_player.vardagsrum_3
+        - media_player.vardagsrum_2   # Apple TV – visar fjärrkontroll och appar i stället för bibliotek
+      _party_skarm: https://app.music-assistant.io/stable/#/party   # Music Assistants partyskärm (flik "Party")
+      _party_url: ""                # eller gästlänken till partyt – då visas en QR-kod i stället
+
+      # ---------- Energi (Tibber) ----------
+      _elpris: sensor.tibber_prices
+      _el_prefix: symfonigatan_7  # månadskostnaden läses från sensor.<prefix>_manadskostnad
+      _elomrade: SE3
+      _el_billig: 1               # kr/kWh – under detta är det billigt
+      _el_dyr: 2                  # kr/kWh – över detta är det dyrt
+
+      # ---------- Solceller (lämna tomt tills du har solceller – då syns inget) ----------
+      _sol_effekt: ''             # vad panelerna ger JUST NU, W eller kW   (ex. sensor.solar_power)
+      _sol_idag: ''               # producerat idag, kWh                    (ex. sensor.solar_energy_today)
+      _sol_salt: ''               # sålt till nätet idag, kWh   – valfritt
+      _husets_effekt: ''          # vad huset drar just nu, W   – valfritt (visar överskott)
+      _sol_prognos: ''            # Forecast.Solar: prognos idag, kWh – valfritt
+      _sol_max_kw: 0              # anläggningens toppeffekt i kW, t.ex. 10 – valfritt
+
+      # ---------- Hembatteri (lämna tomt om du inte har något – då syns inget) ----------
+      _batteri_niva: ''           # laddnivå i %                         (ex. sensor.battery_state_of_charge)
+      _batteri_effekt: ''         # effekt in/ut, W eller kW             (ex. sensor.battery_power)
+      _batteri_effekt_omvand: false   # true om sensorn visar PLUS när batteriet laddar UR
+      _batteri_kapacitet: 0       # batteriets storlek i kWh, t.ex. 10 – ger "Fullt om …" / "Räcker ca …"
+
+      # ---------- Elbil (ta bort # för att slå på) ----------
+      # _elbil:
+      #   namn: Audi e-tron
+      #   prefix: audi_e_tron         # början på bilens entiteter, t.ex. sensor.audi_e_tron_state_of_charge – resten hittas själv
+      #   kapacitet: 86               # batteriets storlek i kWh (e-tron 55: 86, e-tron 50: 64)
+      #   laddeffekt: 11              # laddboxens effekt i kW
+      #   farg: '#59606A'             # bilens färg på bilden
+      #   laddbox: switch.laddbox     # valfritt – knapp för att starta laddningen
+
+      # ---------- Förbrukning (valfritt – Tibber Pulse hittas automatiskt via _el_prefix) ----------
+      _el_effekt: ''              # vad huset drar just nu, W           (ex. sensor.symfonigatan_7_power)
+      _el_forbrukning_idag: ''    # förbrukat idag, kWh
+      _el_kostnad_idag: ''        # kostnad idag, kr
+      _el_apparater:              # "Vad kostar det?" – ungefärlig förbrukning per körning
+        - namn: Diskmaskin
+          ikon: mdi:dishwasher
+          kwh: 1.1
+          timmar: 2
+        - namn: Tvättmaskin
+          ikon: mdi:washing-machine
+          kwh: 1
+          timmar: 2
+        - namn: Torktumlare
+          ikon: mdi:tumble-dryer
+          kwh: 2.5
+          timmar: 2
+
+      # ---------- Markiser, gardiner, rullgardiner och garage (cover-entiteter) ----------
+      # Tomma listor = Aura hittar dem själv utifrån device_class (awning, curtain, blind/shade/shutter, garage/gate)
+      _markiser: []               # t.ex. - entity: cover.markis_altan  /  namn: Altanen  /  farg: '#3E5C76'  /  randig: true
+      _gardiner: []
+      _rullgardiner: []
+      _garage: []                 # t.ex. - entity: cover.garageport  /  farg: '#E6E4DF'
+      _markis_vind: 9             # Smart förslag: rulla in markisen vid så här mycket vind (m/s), även när det är på väg
+      _solskydd_temp: 24          # Smart förslag: dra ner mot solen när det är så här varmt inne (eller 20° ute)
+      _solskydd_lage: 30          # läget Solskydd: hur långt upp rullgardinerna ska stå (%)
+
+      # ---------- Värme och klimat (climate-entiteter) ----------
+      _varme: []                  # tom = alla climate-entiteter. Annars t.ex. - entity: climate.vardagsrum  /  namn: Värmepumpen  /  typ: luft (luft, vp, golv, element)
+      _varme_sank: 2              # hur många grader "Sänk" och förslagen sänker
+      _varme_borta_min: 60        # Smart förslag: sänk värmen när ingen varit hemma så här många minuter
+
+      # ---------- Säkerhet ----------
+      _larm: alarm_control_panel.alarmo
+      # _larm_borta_slack: false   # frågar inte "Släcka allt?" när du larmar borta
+      _larm_skarm: true           # helskärm på surfplattan med nedräkning när larmet slås på/någon kommer in, och kamerabilder om larmet går
+      _dorrar:
+        - binary_sensor.altandorr_oppning
+        - binary_sensor.entredorr_oppning
+        - binary_sensor.balkongdorr_oppning
+      _fonster: []
+      _las: []
+      _rorelse:
+        - binary_sensor.rorelsevakt
+      _larmgivare: []             # rök-, vatten- och gaslarm – helskärmsvarning när de larmar
+      _vattenventil: ''           # huvudkran för knappen "Stäng huvudkranen" vid vattenläcka, t.ex. valve.huvudkran
+      _kameror: []                # tom lista = alla kameror (Frigate först). Per kamera går även: - entity: camera.entre  /  anvandare: [Alex, Kim]
+      _kamera_anvandare: []       # vilka HA-användare som får se kamerorna (förnamn, hela namnet eller admin). Tom = alla
+      _frigate: frigate           # Frigate-instansen för händelser med bild och klipp (false = av)
+      _handelser: true            # tidslinjen Händelser på säkerhetssidan (false = av)
+      _forslag_oppen_minuter: 10  # Smart förslag säger till när en dörr/ett fönster stått öppet så här länge
+      _forslag_av: []             # stäng av förslag du inte vill ha, t.ex. [norrsken, batt, todo] – namnen står i instruktionsboken (7.4)
+      _kaffe_timmar: 2            # Smart förslag: "Kaffemaskinen står på" efter så här många timmar
+      _batteri_varning: 15        # Smart förslag: "Byt batteri" under så här många procent
+      _morgon_fran: '04:30'       # Smart förslag: "tänd i vardagsrum, kök och hall" när det är mörkt ute mellan dessa tider
+      _morgon_till: '10:00'
+      _morgon_lampor: []          # tom = alla lampor i rum som heter något med vardagsrum, kök eller hall – annars t.ex. [light.golvlampa, light.koksbordet]
+      _morgon_kaffe: true         # efter "Ja, tänd" föreslås att sätta på kaffemaskinen (false = av)
+      _kvall_kl: 22               # Smart förslag: efter detta klockslag föreslås "släck allt och stäng av tv:n"
+      _kvall_dagar: vardag        # vardag (mån–fre) eller alla
+      _kvall_minuter: 5           # nedräkning från att du trycker tills allt släcks
+      # _godnatt_minuter: 5       # förvald tid i God natt-knappen (nederst i menyn). _godnatt: false tar bort knappen
+
+      # ---------- Väder och dagen ----------
+      _vader: weather.hem
+      _pollen_prefix: sensor.pollen_goteborg_
+      _pollen_plats: Göteborg
+      _smhi_prefix: sensor.smhi_odp_home_          # SMHI-sensorerna: vind, byar, riktning, molnbas, nederbörd …
+      _smhi_varning: sensor.smhi_alerts_vastra_gotalands_lan
+      _smhi_varning_aktiv: binary_sensor.smhi_alerts_active_vastra_gotalands_lan
+      _mane: sensor.moon_fas
+      _radar: false               # true = animerad regnradar överst i sidokortet (gör att det behöver skrollas)
+      _norrsken: true             # norrskensprognos (NOAA) under Natthimlen
+      _temp_inne: sensor.temp_vardagsrum_temperatur
+      _fukt_inne: ''              # luftfuktighet inne för "Vädra" – tomt = fuktsensorn i rummet med _temp_inne
+      _att_gora: todo.att_komma_ihag
+      _kalendrar: []              # tom lista = alla kalendrar
+
+      # ---------- Hushållet (ta bort raden eller lämna tom om du inte har saken) ----------
+      _kaffe: kaffemaskin         # början på Home Connect-entiteterna, t.ex. switch.kaffemaskin_av_pa
+      _kaffe_modell: Siemens EQ900
+      _dammsugare:                # en eller flera robotdammsugare
+        - entity: vacuum.mova_e30_ultra
+          namn: Mova E30 Ultra
+          batteri: sensor.mova_e30_ultra_battery_level   # valfritt om roboten själv har batterinivå
+          popup: '#dammsugare'     # valfritt – öppnar en pop-up (bubble-card) i stället för "Mer info"
+        # - entity: vacuum.robot_ovanvaningen
+        #   namn: Övervåningen
+      # Spabad (Gecko) – stort kort på Hushåll och en ruta på Hem. Hittas automatiskt via Watercare-väljaren.
+      # Ta bort # för att ändra något, eller skriv _spa: false om du inte vill ha kortet.
+      # _spa:
+      #   namn: Spabad
+      #   prefix: fridkulla           # början på spabadets entiteter, t.ex. climate.fridkulla_thermostat_1
+      #   forvarm: 2                  # timmar före planerat bad som värmen startar (samma som i spa_automation.yaml)
+      #   efter: 3                    # timmar efter badet innan det går tillbaka till energisnålt
+      #   farg: '#6E5642'             # träpanelens färg på bilden, t.ex. '#4A4D52' för grå
+      #   badar: ''                   # valfritt – en givare som visar att någon badar (annars: bubblorna är på)
+      #   min_temp: 35                # lägsta temperatur (ändras med kugghjulet om input_number.spa_min_temp finns)
+      #   lagen: [borta, standard]    # vilka lägen som visas – även snal, super och helg finns
+      # Bussen (t.ex. Västtrafik) – kortet visas på Hushåll. Lämna _buss tomt om du inte vill ha det.
+      _buss: sensor.mot_centrum
+      _buss_namn: Centrum         # "Mot Centrum"
+      _buss_linje: 8              # används om sensorn inte själv anger linjen
+      _buss_forvarning: 10        # påminnelsen kommer så här många minuter innan bussen går
+      _buss_fonster: 30           # vill du åka 14:00 väljs sista bussen mellan 13:30 och 14:05
+      _tts: tts.google_ai_tts     # röst-tjänst – samma som i larm_automation.yaml så att allt låter likadant
+      _tts_hogtalare: media_player.vardagsrum_3   # högtalaren som säger till
+      # Servern (System Monitor) hittas automatiskt. Skriv _server: false för att dölja kortet.
+      _server: ''
+      _vaxter:
+        - sensor: sensor.monstera_luftfuktighet
+          namn: Monstera
+          min: 30
+          max: 60
+        - sensor: sensor.utevaxer_luftfuktighet
+          namn: Entréväxter
+          min: 30
+          max: 60
+
+  # ══════════════════════════════════════════════════════════════════════════
+  #  Själva appen – du behöver inte ändra något här nedanför.
+  # ══════════════════════════════════════════════════════════════════════════
+  aura_app:
+    template: mitt_hem
+    show_icon: false
+    show_name: false
+    show_state: false
+    show_label: false
+    triggers_update: all
+    tap_action:
+      action: none
+    hold_action:
+      action: none
+    custom_fields:
+      app: >-
+        [[[ return variables.motor ? window.Aura.render(this, variables) : window.__auraFel
+          ? `<div style="padding:48px 24px;font:600 15px system-ui,sans-serif;line-height:1.5;color:#C0503F;text-align:center">Aura hittar inte motorn (${window.__auraFel}).<br>Lägg filen <b>motor.js</b> i <b>config/www/aura/</b> och ladda om sidan.</div>`
+          : `<div style="padding:48px 24px;font:600 15px system-ui,sans-serif;opacity:.55;text-align:center">Laddar Aura …</div>`; ]]]
+    styles:
+      card:
+        - background: none
+        - border: none
+        - border-radius: 0
+        - box-shadow: none
+        - padding: 0
+        - overflow: visible
+        - cursor: default
+        - pointer-events: auto        # utan denna stänger button-card av alla tryck
+        - '--mdc-ripple-color': transparent
+        - '--mdc-ripple-press-opacity': 0
+      grid:
+        - grid-template-areas: '"app"'
+        - grid-template-columns: 1fr
+        - pointer-events: auto
+      custom_fields:
+        app:
+          - width: 100%
+          - justify-self: stretch
+          - pointer-events: auto
+    variables:
+      # Motorn ligger i en egen fil: config/www/aura/motor.js (= /local/aura/motor.js).
+      # Vid uppdatering byter du bara den filen och laddar om sidan – den här YAML-filen behöver du inte röra.
+      # Snabbstart: en kopia av motorn sparas i enheten, så sidan visas direkt. Nya versioner hämtas i bakgrunden.
+      motor: |
+        [[[
+          const url = variables._motor_url || '/local/aura/motor.js', W = window;
+          const kor = (kod, kalla) => { new Function('hass', kod)(hass); W.__auraUrl = url; W.__auraKalla = url + ' · ' + kalla; W.__auraTid = W.__auraTid || { start: W.__auraStart, klar: performance.now(), kalla }; };
+          if (W.Aura && W.Aura.render && W.__auraUrl === url) { W.Aura.hass = hass; return true; }
+          W.__auraStart = W.__auraStart || performance.now();
+          let sparad = null; try { sparad = localStorage.getItem('aura.motor'); } catch (e) {}
+          if (sparad && !W.__auraProvat) { W.__auraProvat = true; try { kor(sparad, 'sparad kopia'); } catch (e) { sparad = null; } }
+          if (!sparad && !W.__auraHamtat) {
+            // Första gången (ingen sparad kopia): hämta motorn direkt så att sidan kan visas i samma steg
+            W.__auraHamtat = true; W.__auraKollat = true;
+            try {
+              const x = new XMLHttpRequest(); x.open('GET', url, false); x.setRequestHeader('Cache-Control', 'no-cache'); x.send();
+              if (x.status >= 200 && x.status < 300) { try { localStorage.setItem('aura.motor', x.responseText); } catch (e) {} kor(x.responseText, 'nedladdad'); W.__auraFel = ''; }
+              else W.__auraFel = 'HTTP ' + x.status;
+            } catch (e) { W.__auraFel = String((e && e.message) || e); }
+          }
+          if (!W.__auraKollat) {
+            // Sparad kopia används – kolla i bakgrunden om motor.js har uppdaterats
+            W.__auraKollat = true;
+            fetch(url, { cache: 'no-cache' })
+              .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+              .then(kod => { if (kod !== sparad) { try { localStorage.setItem('aura.motor', kod); } catch (e) {} kor(kod, 'nedladdad'); } })
+              .catch(() => {});
+          }
+          return !!(W.Aura && W.Aura.render && W.__auraUrl === url);
+        ]]]
+views:
+  - title: Aura
+    path: aura
+    icon: mdi:home-variant-outline
+    type: panel
+    background: '#07080B'
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: custom:button-card
+            template: aura_app
+          # ── Pop-up-fönster: öppnas från Aura med popup: '#hash' i mitt_hem ──
+          - type: custom:bubble-card
+            card_type: pop-up
+            hash: '#dammsugare'
+            name: Mova E30 Ultra
+            icon: mdi:robot-vacuum
+            button_type: name
+            width_desktop: 900px
+            margin_top_desktop: 8vh
+            margin_top_mobile: 8vh
+            bg_opacity: 0
+            bg_blur: 0
+            styles: >
+              .bubble-pop-up-background {
+                background:
+                  radial-gradient(120% 60% at 0% 0%, rgba(255,255,255,0.14) 0%, transparent 55%),
+                  linear-gradient(145deg, rgba(44,52,58,0.78) 0%, rgba(22,28,32,0.86) 100%) !important;
+                backdrop-filter: blur(32px) saturate(180%) !important;
+                -webkit-backdrop-filter: blur(32px) saturate(180%) !important;
+                border: 1px solid rgba(255,255,255,0.16) !important;
+                box-shadow: 0 30px 80px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.25) !important;
+              }
+
+              @media (min-width: 769px) {
+                .bubble-pop-up, .bubble-pop-up-background {
+                  border-radius: 32px !important;
+                }
+                .bubble-pop-up {
+                  height: auto !important;
+                  max-height: 84vh !important;
+                  bottom: auto !important;
+                }
+              }
+
+              .bubble-backdrop { background: rgba(6,10,12,0.45) !important; backdrop-filter:
+              blur(6px); }
+            cards:
+              - type: custom:dreame-vacuum-map-card
+                entity: vacuum.mova_e30_ultra
+                theme: custom
+                custom_theme:
+                  base: dark
+                  accentColor: 'linear-gradient(145deg, #6CC0BC 0%, #4FA3A8 100%)'
+                  accentColorHover: '#8FD4D0'
+                  accentBg: rgba(108, 192, 188, 0.2)
+                grid_options:
+                  columns: 12
+                  rows: auto
+                card_mod:
+                  style: |
+                    ha-card {
+                      background: rgba(255,255,255,0.04) !important;
+                      border: 1px solid rgba(255,255,255,0.10) !important;
+                      border-radius: 24px !important;
+                      box-shadow: none !important;
+                    }

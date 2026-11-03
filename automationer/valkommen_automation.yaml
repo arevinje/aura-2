@@ -1,0 +1,40 @@
+# ═══════════════════════════════════════════════════════════════
+#  Välkommen hem – tänd vardagsrum och hall när borta-larmet slås av (Aura)
+#  Läggs in under Inställningar → Automationer och scener → Skapa automation
+#  → ⋮ → Redigera i YAML. Klistra in allt nedanför och spara.
+#
+#  Gör så här:
+#   • När larmet slås av efter att ha varit på BORTA tänds lamporna nedan.
+#     (Inte efter Hemma- eller Natt-läge, då är ni ju redan hemma.)
+#   • Bara när det är mörkt ute – solen lägre än 5° över horisonten.
+#     Vill du att det tänds alltid, ta bort hela "conditions"-blocket.
+#   • Det spelar ingen roll hur larmet slås av: i Aura, på knappsatsen eller i appen.
+#
+#  Ändra lamporna under "lampor" om du vill ha med fler eller färre.
+# ═══════════════════════════════════════════════════════════════
+alias: Välkommen hem – tänd när larmet slås av
+description: Tänder vardagsrum och hall när borta-larmet slås av och det är mörkt ute (Aura)
+mode: single
+variables:
+  lampor:
+    - light.shellydimmer2_e8db84d44d28   # Sofflampan
+    - light.golvlampa                    # Golvlampa
+    - light.fonsterlampor_nere           # Fönsterlampor
+    - light.hallbelysning                # Hallen
+triggers:
+  - trigger: state
+    entity_id: alarm_control_panel.alarmo
+    to: disarmed
+conditions:
+  # Larmet var på borta – direkt eller under inpasseringstiden (pending)
+  - condition: template
+    value_template: >
+      {{ trigger.from_state.state == 'armed_away'
+         or trigger.from_state.attributes.arm_mode == 'armed_away' }}
+  # Mörkt ute
+  - condition: template
+    value_template: "{{ state_attr('sun.sun', 'elevation') | float(0) < 5 }}"
+actions:
+  - action: light.turn_on
+    target:
+      entity_id: "{{ lampor }}"
