@@ -93,37 +93,27 @@ Aura är en komplett dashboard för Home Assistant med ett modernt, animerat uts
 
 ## 🎨 Det här finns ritat
 
-Allt är ritat i koden, så du behöver inga bildfiler.
+Allt är ritat i koden, så du behöver inga bildfiler. Bilderna tänds, rör sig och följer läget på dina enheter.
 
-<details>
-<summary><b>Lampor</b> – 16 sorter, välj med <code>typ:</code></summary>
+**Lampor** – 16 sorter, välj med `typ:` (tänd och släckt)
 
 ![Alla lampor](skarmbilder/katalog/lampor.png)
-</details>
 
-<details>
-<summary><b>Bilen</b> – valfri färg med <code>farg:</code></summary>
+**Bilen** – valfri färg med `farg:` under `_elbil`
 
 ![Bilen i olika färger och lägen](skarmbilder/katalog/bilar.png)
-</details>
 
-<details>
-<summary><b>Gardiner, markiser och portar</b></summary>
+**Gardiner, markiser och portar** – bilden följer hur långt öppen den är
 
 ![Gardiner, markiser och portar](skarmbilder/katalog/gardiner.png)
-</details>
 
-<details>
-<summary><b>Värme och klimat</b></summary>
+**Värme och klimat**
 
 ![Värme och klimat](skarmbilder/katalog/varme.png)
-</details>
 
-<details>
-<summary><b>Hushåll och spabad</b></summary>
+**Hushåll och spabad**
 
 ![Hushåll och spabad](skarmbilder/katalog/hushall.png)
-</details>
 
 ---
 
