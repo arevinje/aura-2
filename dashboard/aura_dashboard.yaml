@@ -16,7 +16,7 @@ button_card_templates:
   mitt_hem:
     variables:
       # ---------- Utseende ----------
-      _hem_namn: Symfonigatan 7
+      _hem_namn: din_gatan
       _plats: Borås
       _tema: ljus                 # ljus (kräm & brons), mork (marin & indigo) eller noir (svart & champagne) – kan även bytas under Hushåll
       _accent: ''                 # tomt = temats egen färg, annars t.ex. '#B07D3A' eller '#7568FF'
@@ -68,8 +68,8 @@ button_card_templates:
           temp: sensor.temp_overvaningen_temperatur
           fukt: sensor.temp_overvaningen_luftfuktighet
           lampor:
-            - entity: light.melvins_sanglampa
-              namn: Melvins lampa
+            - entity: light.sanglampa
+              namn: Sovrumslampa
               ikon: mdi:lamp-outline
             - entity: switch.fonster_sovrum_uttag
               namn: Fönster sovrum
@@ -78,7 +78,7 @@ button_card_templates:
               namn: Månen
               ikon: mdi:moon-waning-crescent
             - entity: light.bw_lt31
-              namn: Ledlist Melvins sovrum
+              namn: Ledlist sovrum
               ikon: mdi:led-strip-variant
               typ: led
 
@@ -131,7 +131,7 @@ button_card_templates:
 
       # ---------- Energi (Tibber) ----------
       _elpris: sensor.tibber_prices
-      _el_prefix: symfonigatan_7  # månadskostnaden läses från sensor.<prefix>_manadskostnad
+      _el_prefix: prefix          # månadskostnaden läses från sensor.<prefix>_manadskostnad
       _elomrade: SE3
       _el_billig: 1               # kr/kWh – under detta är det billigt
       _el_dyr: 2                  # kr/kWh – över detta är det dyrt
