@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="sv"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>God natt-knapp</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+<style>
+:root { --bg:#0B0D12; --yta:#151821; --yta2:#1D212C; --text:#F2F0EC; --dim:#8D93A3; --acc:#E9B872; --natt:#8E9BE8; --ok:#5FD39A; }
+* { box-sizing:border-box; margin:0; }
+body { background:var(--bg); color:var(--text); font:15px/1.4 Inter, system-ui, sans-serif; min-height:100vh; padding:24px 16px; }
+.wrap { max-width:1100px; margin:0 auto; }
+.platta { border-radius:28px; background:radial-gradient(90% 70% at 85% 0%, #1E2540 0%, transparent 60%), var(--bg); border:1px solid #232838; padding:22px 26px; min-height:520px; position:relative; overflow:hidden; }
+.topp { display:flex; align-items:flex-start; gap:16px; flex-wrap:wrap; }
+.topp-v { flex:1; min-width:200px; } .ey { color:var(--dim); font-size:13px; font-weight:600; } h1 { font-size:30px; font-weight:800; letter-spacing:-.02em; }
+.topp-h { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.chip { display:inline-flex; align-items:center; gap:7px; height:40px; padding:0 14px 0 10px; border-radius:20px; background:var(--yta); border:1px solid #262B38; color:var(--text); font:700 13px Inter, system-ui; cursor:pointer; }
+.chip i { font-size:18px; color:var(--dim); } .chip.ok i { color:var(--ok); }
+.klocka { font-size:22px; font-weight:800; margin-left:6px; font-variant-numeric:tabular-nums; }
+/* God natt-chippet */
+.gn { position:relative; }
+.gn.kvall { background:linear-gradient(135deg, #2A3160, #1B2040); border-color:#3B4590; box-shadow:0 0 24px rgba(142,155,232,.25); }
+.gn.kvall i, .gn.igang i { color:var(--natt); }
+.gn.igang { background:#1F2547; border-color:var(--natt); padding-left:6px; }
+.ring { width:28px; height:28px; transform:rotate(-90deg); } .ring circle { fill:none; stroke-width:3; } .ring .s { stroke:var(--natt); stroke-linecap:round; transition:stroke-dashoffset 1s linear; }
+.gn .tid { font-variant-numeric:tabular-nums; }
+.innehall { display:grid; grid-template-columns:1.2fr 1fr 1fr; gap:14px; margin-top:22px; opacity:1; transition:opacity 1s, filter 1s; }
+.innehall div { background:var(--yta); border-radius:22px; height:150px; border:1px solid #20242F; display:flex; align-items:flex-end; padding:14px; color:var(--dim); font-weight:700; font-size:13px; }
+.innehall div:first-child { grid-row:span 2; height:auto; }
+.platta.mork .innehall { filter:brightness(.35); }
+/* Ark */
+.over { position:fixed; z-index:5; inset:0; background:rgba(5,6,10,.6); backdrop-filter:blur(6px); display:none; align-items:center; justify-content:center; padding:16px; }
+.over.pa { display:flex; }
+.ark { width:100%; max-width:440px; background:#141826; border:1px solid #2A3050; border-radius:26px; padding:22px; box-shadow:0 30px 80px rgba(0,0,0,.6); }
+.ark-h { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+.mane { width:46px; height:46px; border-radius:16px; display:grid; place-items:center; background:linear-gradient(135deg, #3A4490, #232A5C); font-size:24px; color:#DCE1FF; }
+.ark h2 { font-size:20px; } .ark-h p { color:var(--dim); font-size:13px; }
+.lbl { font-size:12px; font-weight:800; color:var(--dim); text-transform:uppercase; letter-spacing:.08em; margin:14px 0 8px; }
+.tider { display:grid; grid-template-columns:repeat(5, 1fr); gap:6px; }
+.tider span { text-align:center; padding:11px 0; border-radius:14px; background:var(--yta2); font-weight:800; font-size:14px; cursor:pointer; border:1px solid transparent; }
+.tider span.pa { background:#2B3366; border-color:var(--natt); color:#fff; }
+.rad { display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:16px; background:var(--yta2); margin-bottom:6px; cursor:pointer; }
+.rad i { font-size:20px; color:var(--natt); width:22px; text-align:center; } .rad span { flex:1; font-weight:700; font-size:14px; } .rad small { display:block; color:var(--dim); font-weight:600; font-size:12px; }
+.vx { width:42px; height:24px; border-radius:12px; background:#323848; position:relative; flex:none; transition:.2s; } .vx::after { content:''; position:absolute; left:3px; top:3px; width:18px; height:18px; border-radius:50%; background:#fff; transition:.2s; }
+.rad.pa .vx { background:var(--natt); } .rad.pa .vx::after { left:21px; } .rad:not(.pa) i { color:var(--dim); }
+.ok-k { margin-top:16px; width:100%; padding:15px; border:0; border-radius:18px; background:linear-gradient(135deg, #8E9BE8, #6B78D0); color:#0E1230; font:800 15px Inter, system-ui; cursor:pointer; }
+.sek { display:flex; gap:8px; margin-top:8px; } .sek button { flex:1; padding:12px; border-radius:16px; border:1px solid #2A3050; background:var(--yta2); color:var(--text); font:700 14px Inter, system-ui; cursor:pointer; }
+.sek button.av { color:#F08A7A; }
+.stor { text-align:center; padding:8px 0 4px; } .stor b { font-size:54px; font-weight:800; letter-spacing:-.03em; font-variant-numeric:tabular-nums; } .stor p { color:var(--dim); font-size:13px; }
+.toast { position:fixed; z-index:6; left:50%; bottom:22px; transform:translateX(-50%); background:#1F2547; border:1px solid var(--natt); padding:12px 18px; border-radius:16px; font-weight:700; display:none; }
+.sim { margin-top:18px; display:flex; gap:16px; flex-wrap:wrap; align-items:center; color:var(--dim); font-size:13px; }
+.sim button { padding:8px 12px; border-radius:12px; border:1px solid #2A3050; background:var(--yta); color:var(--text); font:700 13px Inter, system-ui; cursor:pointer; }
+.not { margin-top:14px; color:var(--dim); font-size:13px; max-width:760px; }
+@media (max-width:640px) { .platta { padding:16px; } h1 { font-size:24px; } .innehall { grid-template-columns:1fr 1fr; } .klocka { display:none; } }
+</style></head><body><div class="wrap">
+<div class="platta" id="platta">
+  <div class="topp">
+    <div class="topp-v"><div class="ey">Söndag 1 november</div><h1 id="hals">God kväll</h1></div>
+    <div class="topp-h">
+      <span class="chip ok"><i class="mdi mdi-lock"></i>Hemmet är säkrat</span>
+      <span class="chip"><i class="mdi mdi-weather-night"></i>4°</span>
+      <span id="gn"></span>
+      <span class="klocka" id="kl">22:41</span>
+    </div>
+  </div>
+  <div class="innehall"><div>Bild / rum</div><div>Klimat</div><div>Enheter</div><div>Förslag</div><div>Elpris</div></div>
+  <div class="over" id="over"><div class="ark" id="ark"></div></div>
+  <div class="toast" id="toast"></div>
+</div>
+<div class="sim">Testa: <button onclick="satt(false)">Dagtid</button><button onclick="satt(true)">Efter kl 21</button><button onclick="spola()">Spola fram 1 min</button></div>
+<p class="not">Knappen <b>God natt</b> sitter uppe i hörnet och syns på alla sidor. Efter kl 21 lyser den lite starkare. Under nedräkningen visar den en ring och tiden som är kvar. Tryck på den igen för att lägga till 5 min, släcka direkt eller avbryta. Allt körs i Home Assistant, så det fungerar även om surfplattan somnar.</p>
+</div>
+<script>
+const st = { kvall: true, min: 5, slut: 0, start: 0, val: { lampor: true, tv: true, larm: false, dimma: true } };
+const VAL = [['lampor', 'mdi:lightbulb-group-outline', 'Släck alla lampor', '9 tända just nu'], ['tv', 'mdi:television', 'Stäng av tv:n', 'Vardagsrummet är på'],
+  ['dimma', 'mdi:brightness-6', 'Dimma först', 'Ljuset sänks sista minuten'], ['larm', 'mdi:shield-moon', 'Larma natt', 'Skalskyddet slås på']];
+const pad = n => String(n).padStart(2, '0'), mmss = s => `${Math.floor(s / 60)}:${pad(s % 60)}`;
+let forskj = 0; const nu = () => Date.now() + forskj;
+const klock = t => { const d = new Date(22 * 36e5 + 41 * 6e4 + (t - T0) - 36e5); return `${pad(d.getUTCHours() + 1)}:${pad(d.getUTCMinutes())}`; };
+const T0 = Date.now();
+function chip() {
+  const el = document.getElementById('gn');
+  if (st.slut) {
+    const kvar = Math.max(0, Math.round((st.slut - nu()) / 1000)), andel = kvar / ((st.slut - st.start) / 1000), O = 2 * Math.PI * 11;
+    el.innerHTML = `<button class="chip gn igang" onclick="oppna()"><svg class="ring" viewBox="0 0 28 28"><circle cx="14" cy="14" r="11" stroke="#323A66"/><circle class="s" cx="14" cy="14" r="11" stroke-dasharray="${O}" stroke-dashoffset="${O * (1 - andel)}"/></svg>Släcks om <span class="tid">${mmss(kvar)}</span></button>`;
+    if (kvar <= 0) slackt();
+  } else el.innerHTML = `<button class="chip gn ${st.kvall ? 'kvall' : ''}" onclick="oppna()"><i class="mdi mdi-power-sleep"></i>God natt</button>`;
+  document.getElementById('kl').textContent = klock(nu());
+  if (document.getElementById('over').classList.contains('pa') && st.slut) ark();
+}
+function ark() {
+  const a = document.getElementById('ark');
+  if (st.slut) {
+    const kvar = Math.max(0, Math.round((st.slut - nu()) / 1000));
+    a.innerHTML = `<div class="ark-h"><span class="mane"><i class="mdi mdi-timer-sand"></i></span><div><h2>God natt-läge på</h2><p>Släcker kl ${klock(st.slut)}</p></div></div>
+      <div class="stor"><b>${mmss(kvar)}</b><p>${[st.val.lampor && 'Lamporna', st.val.tv && 'tv:n'].filter(Boolean).join(' och ')} släcks${st.val.larm ? ' och larmet slås på natt' : ''}</p></div>
+      <div class="sek"><button onclick="mer()">+5 min</button><button onclick="slackt()">Släck nu</button></div>
+      <div class="sek"><button class="av" onclick="avbryt()">Avbryt</button><button onclick="stang()">Stäng</button></div>`;
+    return;
+  }
+  a.innerHTML = `<div class="ark-h"><span class="mane"><i class="mdi mdi-weather-night"></i></span><div><h2>God natt</h2><p>Hinner gå upp innan det blir mörkt</p></div></div>
+    <div class="lbl">Släck om</div><div class="tider">${[0, 2, 5, 10, 15].map(m => `<span class="${m === st.min ? 'pa' : ''}" onclick="st.min=${m};ark()">${m ? m + ' min' : 'Nu'}</span>`).join('')}</div>
+    <div class="lbl">Det här händer</div>${VAL.map(([id, ikon, t, s]) => `<div class="rad ${st.val[id] ? 'pa' : ''}" onclick="st.val.${id}=!st.val.${id};ark()"><i class="mdi ${ikon}"></i><span>${t}<small>${s}</small></span><em class="vx"></em></div>`).join('')}
+    <button class="ok-k" onclick="starta()">${st.min ? `Släck om ${st.min} min · kl ${klock(nu() + st.min * 6e4)}` : 'Släck nu'}</button>
+    <div class="sek"><button onclick="stang()">Avbryt</button></div>`;
+}
+function oppna() { ark(); document.getElementById('over').classList.add('pa'); }
+function stang() { document.getElementById('over').classList.remove('pa'); }
+function starta() { if (!st.min) return slackt(); st.start = nu(); st.slut = nu() + st.min * 6e4; stang(); chip(); }
+function mer() { st.slut += 5 * 6e4; chip(); ark(); }
+function avbryt() { st.slut = 0; stang(); chip(); toast('Avbrutet – allt lyser som förut'); }
+function slackt() { st.slut = 0; stang(); document.getElementById('platta').classList.add('mork'); chip(); toast('God natt! Allt är släckt 🌙'); setTimeout(() => document.getElementById('platta').classList.remove('mork'), 4000); }
+function toast(t) { const e = document.getElementById('toast'); e.textContent = t; e.style.display = 'block'; clearTimeout(e._t); e._t = setTimeout(() => e.style.display = 'none', 3000); }
+function satt(k) { st.kvall = k; document.getElementById('hals').textContent = k ? 'God kväll' : 'God eftermiddag'; chip(); }
+function spola() { forskj += 6e4; chip(); }
+setInterval(chip, 1000); chip();
+</script></body></html>

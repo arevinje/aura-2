@@ -1,0 +1,65 @@
+# ═══════════════════════════════════════════════════════════════
+#  Släck när borta-larmet är på (Aura)
+#
+#  Körs när du väljer "Släck och larma" i Aura. Lamporna lyser under hela
+#  utpasseringstiden i Alarmo. När larmet är på tonas de ner och släcks.
+#  Slår du av larmet under utpasseringstiden släcks ingenting.
+#
+#  Med skriptet sköter Home Assistant släckningen, så det fungerar även om
+#  du larmade från mobilen och den somnar. Utan skriptet måste skärmen där
+#  du tryckte vara igång tills larmet är på.
+#
+#  Skapa skriptet: Inställningar → Automationer och scener → fliken Skript
+#  → Lägg till skript → Skapa nytt skript → ⋮ → Redigera i YAML.
+#  Ersätt allt med raderna från "alias: Aura borta släck" och nedåt och spara.
+#  Det ska heta script.aura_borta_slack (syns under ⋮ → Information).
+#
+#  Aura skickar med larmet, lamporna och tv-apparaterna, så du behöver inte
+#  ändra något här. Vill du ändra hur länge lamporna tonas ner ändrar du
+#  "transition" (sekunder).
+# ═══════════════════════════════════════════════════════════════
+alias: Aura borta släck
+description: Tonar ner och släcker lampor och tv när borta-larmet är på. Startas från Aura.
+icon: mdi:lightbulb-off-outline
+mode: restart
+fields:
+  larm:
+    description: Larmet som ska vara på
+  lampor:
+    description: Lampor och uttag som ska släckas
+  tv:
+    description: Tv-apparater som ska stängas av
+sequence:
+  # Vänta tills larmet börjar slås på (kodrutan kan ta en stund). Annars avbryts skriptet.
+  - wait_template: "{{ states(larm) in ['arming', 'armed_away'] }}"
+    timeout: "00:02:00"
+    continue_on_timeout: false
+  # Utpasseringstiden: vänta tills larmet är på eller har slagits av
+  - wait_template: "{{ states(larm) != 'arming' }}"
+    timeout: "00:15:00"
+    continue_on_timeout: false
+  - condition: template
+    value_template: "{{ states(larm) == 'armed_away' }}"
+  - if:
+      - condition: template
+        value_template: "{{ lampor | select('match', 'light\\.') | select('is_state', 'on') | list | count > 0 }}"
+    then:
+      - action: light.turn_off
+        target:
+          entity_id: "{{ lampor | select('match', 'light\\.') | select('is_state', 'on') | list }}"
+        data:
+          transition: 5
+  - if:
+      - condition: template
+        value_template: "{{ lampor | reject('match', 'light\\.') | select('is_state', 'on') | list | count > 0 }}"
+    then:
+      - action: homeassistant.turn_off
+        target:
+          entity_id: "{{ lampor | reject('match', 'light\\.') | select('is_state', 'on') | list }}"
+  - if:
+      - condition: template
+        value_template: "{{ tv | default([]) | reject('is_state', ['off', 'standby', 'unavailable', 'unknown']) | list | count > 0 }}"
+    then:
+      - action: media_player.turn_off
+        target:
+          entity_id: "{{ tv | default([]) | reject('is_state', ['off', 'standby', 'unavailable', 'unknown']) | list }}"

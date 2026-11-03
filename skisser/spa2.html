@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="sv"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spa skiss</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#0E0D0C; --yta:#1A1816; --yta2:#24211E; --text:#F3EEE7; --dim:#A39B90; --svag:#6C655C; --rad:rgba(255,255,255,.07); --acc:#D9B25F; --ok:#4FD18B; --varn:#F0A54A; --spa:#36B9E0; }
+  * { box-sizing:border-box; margin:0; }
+  body { background:radial-gradient(120% 80% at 0 0, #1E1A15, var(--bg) 60%); color:var(--text); font-family:Manrope, system-ui, sans-serif; padding:28px; min-height:100vh; }
+  h1 { font-size:13px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--dim); margin:0 0 14px 4px; }
+  .rad { display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:16px; margin-bottom:30px; }
+  .kort { position:relative; background:linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,0)) , var(--yta); border-radius:26px; padding:18px; box-shadow:inset 0 0 0 1px var(--rad), 0 20px 40px rgba(0,0,0,.35); overflow:hidden; isolation:isolate; display:flex; flex-direction:column; min-height:420px; }
+  .kort::before { content:''; position:absolute; inset:0; z-index:-1; background:radial-gradient(90% 55% at 50% 38%, color-mix(in srgb, var(--g, transparent) 22%, transparent), transparent 70%); }
+  .kh { display:flex; align-items:center; gap:10px; }
+  .kh-ik { width:30px; height:30px; border-radius:10px; display:grid; place-items:center; background:var(--yta2); color:var(--acc); font-size:17px; }
+  .kh-t { flex:1; font-size:12px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--dim); }
+  .pill { font-size:11.5px; font-weight:800; padding:5px 10px; border-radius:999px; background:var(--yta2); color:var(--dim); white-space:nowrap; }
+  .pill.ok { background:rgba(79,209,139,.13); color:var(--ok); } .pill.varn { background:rgba(240,165,74,.14); color:var(--varn); } .pill.spa { background:rgba(54,185,224,.15); color:var(--spa); }
+  .bild { flex:1; display:grid; place-items:center; min-height:150px; margin:6px -6px 0; }
+  .bild svg { width:100%; max-height:170px; overflow:visible; }
+  .temp { display:flex; align-items:flex-end; justify-content:space-between; gap:10px; margin-top:4px; }
+  .tnu { font-size:46px; font-weight:300; letter-spacing:-.05em; line-height:.9; } .tnu sup { font-size:.45em; color:var(--tf, var(--spa)); vertical-align:top; position:relative; top:.2em; }
+  .tsub { font-size:11.5px; font-weight:700; color:var(--dim); margin-top:6px; display:flex; align-items:center; gap:4px; }
+  .steg { display:flex; align-items:center; gap:4px; background:var(--yta2); border-radius:14px; padding:4px; }
+  .steg button { width:30px; height:30px; border-radius:10px; border:0; background:rgba(255,255,255,.05); color:var(--text); font-size:17px; }
+  .steg b { min-width:46px; text-align:center; font-size:14px; font-weight:800; } .steg b small { display:block; font-size:9.5px; color:var(--dim); font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
+  .varm { height:5px; border-radius:9px; background:var(--yta2); margin:12px 0 0; overflow:hidden; } .varm i { display:block; height:100%; border-radius:9px; background:linear-gradient(90deg, #F0A54A, #E8694A); }
+  .knappar { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:6px; margin-top:12px; }
+  .knappar button { display:flex; flex-direction:column; align-items:center; gap:3px; padding:9px 4px; border:0; border-radius:14px; background:var(--yta2); color:var(--dim); font:inherit; font-size:11.5px; font-weight:800; }
+  .knappar button i { font-size:19px; } .knappar button.pa { background:rgba(54,185,224,.16); color:var(--spa); } .knappar button.pa.ljus { background:color-mix(in srgb, var(--lf) 18%, transparent); color:var(--lf); }
+  .lagen { display:flex; gap:5px; margin-top:8px; }
+  .lagen span { flex:1; text-align:center; font-size:10.5px; font-weight:800; padding:6px 2px; border-radius:10px; color:var(--svag); box-shadow:inset 0 0 0 1px var(--rad); white-space:nowrap; }
+  .lagen span.pa { color:var(--text); background:var(--yta2); box-shadow:inset 0 0 0 1px rgba(255,255,255,.14); }
+  .plan { margin-top:10px; padding:10px 12px; border-radius:16px; background:linear-gradient(90deg, rgba(240,165,74,.12), rgba(54,185,224,.12)); box-shadow:inset 0 0 0 1px rgba(255,255,255,.06); }
+  .plan-t { display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:800; } .plan-t i { font-size:16px; color:var(--acc); } .plan-t span { margin-left:auto; color:var(--dim); font-size:11px; }
+  .tl { position:relative; height:4px; border-radius:9px; background:rgba(255,255,255,.08); margin:12px 2px 4px; }
+  .tl i { position:absolute; top:0; bottom:0; border-radius:9px; } .tl em { position:absolute; top:-4px; width:12px; height:12px; margin-left:-6px; border-radius:50%; background:var(--text); box-shadow:0 0 0 3px var(--yta); }
+  .tl-l { display:flex; justify-content:space-between; font-size:10.5px; font-weight:800; color:var(--dim); }
+  .planknapp { display:flex; align-items:center; justify-content:center; gap:6px; margin-top:8px; padding:8px; border-radius:12px; font-size:12px; font-weight:800; color:var(--acc); box-shadow:inset 0 0 0 1px rgba(217,178,95,.3); }
+  .modal { width:340px; background:#1E1B18; border-radius:26px; padding:20px; box-shadow:inset 0 0 0 1px var(--rad), 0 30px 60px rgba(0,0,0,.5); }
+  .modal h2 { font-size:17px; font-weight:800; margin-bottom:4px; } .modal p { font-size:12.5px; color:var(--dim); font-weight:600; margin-bottom:14px; }
+  .val { display:grid; grid-template-columns:repeat(4, 1fr); gap:6px; margin-bottom:10px; } .val span { text-align:center; padding:10px 0; border-radius:12px; background:var(--yta2); font-weight:800; font-size:14px; } .val span.pa { background:var(--acc); color:#1A1510; }
+  .dagar { display:flex; gap:6px; margin-bottom:14px; } .dagar span { flex:1; text-align:center; padding:7px; border-radius:10px; font-size:12px; font-weight:800; color:var(--dim); box-shadow:inset 0 0 0 1px var(--rad); } .dagar span.pa { color:var(--text); background:var(--yta2); }
+  .rk { display:flex; justify-content:space-between; padding:9px 0; border-top:1px solid var(--rad); font-size:12.5px; font-weight:700; color:var(--dim); } .rk b { color:var(--text); }
+  .ok-k { margin-top:14px; padding:12px; border-radius:14px; text-align:center; font-weight:800; background:var(--acc); color:#1A1510; }
+  .etikett { text-align:center; font-size:12px; font-weight:800; color:var(--dim); margin-top:10px; letter-spacing:.04em; }
+  /* Hem-rutor */
+  .hem { display:grid; grid-template-columns:repeat(4, 210px); gap:14px; }
+  .enh { position:relative; height:150px; border-radius:24px; background:var(--yta); box-shadow:inset 0 0 0 1px var(--rad); padding:14px; overflow:hidden; }
+  .enh.pa { background:linear-gradient(160deg, rgba(54,185,224,.16), transparent 70%), var(--yta); }
+  .enh .ik { width:34px; height:34px; border-radius:12px; display:grid; place-items:center; background:var(--yta2); color:var(--dim); font-size:19px; } .enh.pa .ik { color:var(--spa); background:rgba(54,185,224,.15); }
+  .enh b { position:absolute; left:14px; bottom:32px; font-size:14px; font-weight:800; } .enh small { position:absolute; left:14px; bottom:14px; font-size:11.5px; font-weight:700; color:var(--dim); }
+  .enh svg { position:absolute; right:-8px; top:22px; width:64%; overflow:visible; }
+  /* Animationer */
+  .anga path { animation:anga 5s ease-in-out infinite; transform-box:fill-box; transform-origin:50% 100%; opacity:0; }
+  .anga path:nth-child(2) { animation-delay:1.6s; } .anga path:nth-child(3) { animation-delay:3.2s; }
+  @keyframes anga { 0% { opacity:0; transform:translateY(8px) scaleY(.7); } 30% { opacity:.55; } 100% { opacity:0; transform:translateY(-22px) scaleY(1.15); } }
+  .bubbla { animation:bubbla 2.2s ease-in infinite; transform-box:fill-box; transform-origin:center; }
+  @keyframes bubbla { 0% { opacity:0; transform:translateY(3px) scale(.4); } 30% { opacity:.9; } 100% { opacity:0; transform:translateY(-6px) scale(1.1); } }
+  .krus { animation:krus 3.4s ease-out infinite; transform-box:fill-box; transform-origin:center; }
+  @keyframes krus { 0% { opacity:.6; transform:scale(.6); } 100% { opacity:0; transform:scale(1.5); } }
+  .glitter { animation:glitter 4s ease-in-out infinite alternate; } @keyframes glitter { to { opacity:.25; transform:translateX(6px); } }
+  .led { animation:led 2s ease-in-out infinite; } @keyframes led { 50% { opacity:.45; } }
+
+  .wrap { display:grid; grid-template-columns:360px 1fr; gap:24px; align-items:start; max-width:1100px; }
+  .kort.live { min-height:560px; }
+  .knappar button, .lagen span, .steg button, .planknapp, .val span, .dagar span, .farger i, .ok-k { cursor:pointer; user-select:none; }
+  .knappar button:active, .steg button:active, .planknapp:active { transform:scale(.95); }
+  .lagen span:hover { color:var(--text); }
+  .farger { display:flex; gap:8px; justify-content:center; margin-top:8px; } .farger i { width:22px; height:22px; border-radius:50%; box-shadow:inset 0 0 0 2px rgba(255,255,255,.15); } .farger i.pa { box-shadow:0 0 0 2px var(--yta), 0 0 0 4px #fff; }
+  .sim { background:var(--yta); border-radius:22px; padding:18px; box-shadow:inset 0 0 0 1px var(--rad); }
+  .sim h3, .hemrad h3 { font-size:12px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--dim); margin:0 0 10px; }
+  .klocka { font-size:40px; font-weight:300; letter-spacing:-.04em; } input[type=range] { width:100%; accent-color:var(--acc); margin:10px 0; }
+  .sim p { font-size:13px; color:var(--dim); font-weight:600; line-height:1.6; margin-top:8px; } .sim p b { color:var(--text); }
+  .hemrad { margin-top:18px; } .hemrad .enh { width:230px; }
+  .over { position:fixed; inset:0; background:rgba(0,0,0,.55); backdrop-filter:blur(6px); display:none; place-items:center; z-index:9; } .over.pa { display:grid; }
+  .avbryt { margin-top:8px; text-align:center; font-size:12.5px; font-weight:800; color:var(--dim); padding:8px; cursor:pointer; }
+  .plan-t span b { cursor:pointer; color:var(--acc); font-weight:800; }
+</style></head>
+<body>
+<div class="wrap"><div id="kort"></div>
+<div><div class="sim"><h3>Testa · spola fram klockan</h3><div class="klocka" id="kl"></div>
+  <input type="range" id="tid" min="900" max="1410" step="5" value="990">
+  <p>Klicka på allt i kortet: Bada nu, Bubblor, Ljus (välj färg), lägena, − och + för måltemperatur och <b>Planera bad</b>. Dra sedan klockan och se hur spabadet väntar i energisnålt läge, börjar värma i tid och är klart till badet.</p>
+  <p id="info"></p></div>
+  <div class="hemrad"><h3>Rutan på Hem</h3><div id="hem"></div></div></div></div>
+<div class="over" id="over"><div class="modal"><h2>När ska ni bada?</h2><p>Spabadet går i energisnålt läge och börjar värma 2 timmar innan så att det är rätt temperatur när ni kliver i.</p>
+  <div class="dagar" id="dagar"></div><div class="val" id="val"></div><div id="rk"></div>
+  <div class="ok-k" id="okk"></div><div class="avbryt" onclick="stang()">Avbryt</div></div></div>
+<script>
+
+// Spabad snett framifrån: träpanel, akrylskal, vatten, ånga, bubblor, ljus, lock och badande
+function spaSvg(o) {
+  const n = spaSvg.n = (spaSvg.n || 0) + 1, id = x => `sp${n}${x}`;
+  const tra = o.farg || '#6E5642', ljus = o.ljus ? o.ljusFarg : '', vatten = ljus || (o.snal ? '#3E9FC0' : '#3FB6DA');
+  const skal = 'M44 44c2-6 6-8 12-8h152c6 0 10 2 12 8l20 30c2 4 0 8-5 8H29c-5 0-7-4-5-8z';
+  const vat = 'M60 47c1-3 3-4 6-4h132c3 0 5 1 6 4l14 22c1 3 0 5-3 5H49c-3 0-4-2-3-5z';
+  const person = (x, y, hud, har, s = 1) => `<g transform="translate(${x} ${y}) scale(${s})">
+      <path d="M-15 13c0-9 6-13 15-13s15 4 15 13z" fill="${hud}"/>
+      <path d="M-3 0v-4h6v4" fill="${hud}"/>
+      <circle cx="0" cy="-11" r="8.4" fill="${hud}"/>
+      <path d="${har}" fill="#2B2420"/></g>`;
+  return `<svg viewBox="0 0 264 150" aria-hidden="true"><defs>
+      <linearGradient id="${id('t')}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="color-mix(in srgb, ${tra} 85%, #fff)"/><stop offset=".25" stop-color="${tra}"/><stop offset="1" stop-color="color-mix(in srgb, ${tra} 55%, #000)"/></linearGradient>
+      <linearGradient id="${id('s')}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D7DCE0"/><stop offset="1" stop-color="#F6F7F8"/></linearGradient>
+      <linearGradient id="${id('v')}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="color-mix(in srgb, ${vatten} 55%, #062030)"/><stop offset=".6" stop-color="${vatten}"/><stop offset="1" stop-color="color-mix(in srgb, ${vatten} 60%, #fff)"/></linearGradient>
+      <linearGradient id="${id('l')}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4A4F55"/><stop offset="1" stop-color="#2A2E33"/></linearGradient>
+      <filter id="${id('b')}" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
+      <clipPath id="${id('c')}"><path d="${vat}"/></clipPath></defs>
+    <ellipse cx="132" cy="140" rx="122" ry="7" fill="rgba(0,0,0,.45)" filter="url(#${id('b')})"/>
+    ${ljus ? `<ellipse cx="132" cy="60" rx="120" ry="34" fill="${ljus}" opacity=".35" filter="url(#${id('b')})"/>` : ''}
+    <path d="M24 78h216v52c0 5-3 8-8 8H32c-5 0-8-3-8-8z" fill="url(#${id('t')})"/>
+    ${Array.from({ length: 17 }, (_, i) => `<path d="M${36 + i * 12} 84v50" stroke="rgba(0,0,0,.22)" stroke-width="1.2"/>`).join('')}
+    <path d="M24 132h216v-3H24z" fill="rgba(0,0,0,.35)"/><path d="M24 80h216" stroke="rgba(255,255,255,.18)" stroke-width="1.5"/>
+    <rect x="182" y="90" width="44" height="22" rx="6" fill="#121417" stroke="rgba(255,255,255,.12)"/>
+    <text x="${o.ikon ? 198 : 204}" y="105.5" text-anchor="middle" font-family="Manrope, sans-serif" font-size="10.5" font-weight="800" fill="${o.varmer ? '#F6A355' : '#7FD6F0'}" class="${o.varmer ? 'led' : ''}">${o.temp}°</text>
+    ${o.ikon ? `<path d="${o.ikon}" transform="translate(211 95) scale(.5)" fill="${o.snal ? '#5FD39A' : '#9AA3AD'}"/>` : ''}
+    ${o.lock ? `
+      <path d="M40 42c2-7 7-10 14-10h156c7 0 12 3 14 10l22 32c3 5 0 9-6 9H24c-6 0-9-4-6-9z" fill="url(#${id('l')})"/>
+      <path d="M132 32l-2 51" stroke="rgba(0,0,0,.45)" stroke-width="2"/><path d="M48 42c50-4 118-4 168 0" stroke="rgba(255,255,255,.14)" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M22 78h220" stroke="rgba(0,0,0,.35)" stroke-width="3"/>
+      <path d="M70 79v5M194 79v5" stroke="#1B1E22" stroke-width="5" stroke-linecap="round"/>`
+    : `
+      <path d="${skal}" fill="url(#${id('s')})"/><path d="M24 79h216" stroke="rgba(0,0,0,.18)" stroke-width="1.5"/>
+      <path d="${vat}" fill="url(#${id('v')})"/>
+      <g clip-path="url(#${id('c')})">
+        <path d="M70 52c20-3 40 3 60 0s40-3 60 0" stroke="rgba(255,255,255,.35)" stroke-width="1.6" fill="none" class="glitter"/>
+        <path d="M60 64c25-3 45 3 70 0s45-3 75 0" stroke="rgba(255,255,255,.22)" stroke-width="1.4" fill="none" class="glitter" style="animation-delay:-2s"/>
+        ${ljus ? `<ellipse cx="132" cy="70" rx="70" ry="8" fill="#fff" opacity=".28" filter="url(#${id('b')})"/>` : ''}
+        ${o.pump ? Array.from({ length: 16 }, (_, i) => { const x = 62 + (i * 37) % 150, y = 50 + (i * 13) % 22, r = 1.2 + (i % 3) * .7; return `<circle class="bubbla" cx="${x}" cy="${y}" r="${r}" fill="#fff" opacity=".85" style="animation-delay:${(i * .27).toFixed(2)}s"/>`; }).join('')
+          + [[80, 60], [186, 58], [132, 66]].map(([x, y], i) => `<ellipse class="krus" cx="${x}" cy="${y}" rx="12" ry="3" fill="none" stroke="#fff" stroke-width="1" style="animation-delay:${i * 1.1}s"/>`).join('') : ''}
+      </g>
+      <path d="M52 40h160" stroke="rgba(255,255,255,.9)" stroke-width="1.5" stroke-linecap="round"/>
+      <rect x="84" y="37.5" width="22" height="6" rx="3" fill="#3A3F45"/><rect x="158" y="37.5" width="22" height="6" rx="3" fill="#3A3F45"/>
+      ${o.badar ? person(95, 56, '#E0AE88', 'M-8.6-12c0-7 4-9.6 8.6-9.6s8.6 2.6 8.6 9.6c-2-3-5-4.6-8.6-4.6s-6.6 1.6-8.6 4.6z', 1.25)
+        + person(166, 57, '#C68A62', 'M-8.8-10c-1-8 3-11.5 8.8-11.5 6 0 10 3.5 8.8 11.5 3 4 3 10 1 13-1-6-3-10-2-14-2-2-5-3-7.8-3-3 0-6 1-8 3 1 4-1 8-2 14-2-3-2-9 1.2-13z', 1.28)
+        + `<g clip-path="url(#${id('c')})"><rect x="0" y="60" width="264" height="30" fill="${vatten}" opacity=".82"/>
+          <path d="M40 60.5c10-1.6 20 1.6 30 0s20-1.6 30 0 20 1.6 30 0 20-1.6 30 0 20 1.6 30 0 20-1.6 30 0" stroke="rgba(255,255,255,.6)" stroke-width="1.2" fill="none"/>
+          ${o.pump ? Array.from({ length: 10 }, (_, i) => `<circle class="bubbla" cx="${58 + (i * 41) % 150}" cy="${63 + (i * 7) % 9}" r="${1.3 + (i % 3) * .6}" fill="#fff" opacity=".9" style="animation-delay:${(i * .31).toFixed(2)}s"/>`).join('') : ''}</g>` : ''}
+      ${o.anga ? `<g class="anga" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="3" stroke-linecap="round">
+        <path d="M92 36c-6-6 6-10 0-18"/><path d="M134 34c-6-6 6-10 0-18"/><path d="M174 36c-6-6 6-10 0-18"/></g>` : ''}`}
+  </svg>`;
+}
+
+const LOV = 'M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 0 0 8 20C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z';
+const KAL = 'M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1';
+const LAGEN = [['Standard', 'Standard'], ['Energisnål', 'Snål'], ['Supersnål', 'Supersnål'], ['Helg', 'Helg'], ['Borta', 'Borta']];
+const FARGER = ['#B07CFF', '#36B9E0', '#4FD18B', '#FF6FA8', '#F0A54A', '#FFFFFF'];
+const TAKT = 3, SNAL = 33, BORTA = 30, FORVARM = 120;
+const st = { mal: 38, lage: 'Standard', pump: false, ljus: false, ljusFarg: '#B07CFF', plan: null, badStart: null, modalTid: 20, modalDag: 'Ikväll' };
+const hm = m => `${String(Math.floor(m / 60) % 24).padStart(2, '0')}:${String(Math.round(m % 60)).padStart(2, '0')}`;
+const klocka = () => +document.getElementById('tid').value;
+const kr = x => (Math.round(x * 2) / 2).toFixed(1).replace('.0', '').replace('.', ',');
+function planTider() {
+  if (!st.plan) return null;
+  const bad = st.plan * 60, start = bad - FORVARM;
+  return { bad, start, klar: Math.min(bad, Math.round((start + (st.mal - SNAL) / TAKT * 60) / 5) * 5), slut: Math.min(bad + 180, 1435) };
+}
+function laget() {
+  const t = klocka(), p = planTider();
+  let lage = st.lage, temp = st.lage === 'Borta' ? BORTA : st.lage === 'Energisnål' ? SNAL + 2 : st.lage === 'Supersnål' ? SNAL : st.mal, varmer = false, fas = '';
+  if (p) {
+    if (t < p.start) { lage = 'Energisnål'; temp = SNAL; fas = 'vantar'; }
+    else if (t < p.klar) { lage = 'Standard'; temp = SNAL + (t - p.start) / 60 * TAKT; varmer = true; fas = 'varmer'; }
+    else if (t < p.slut) { lage = 'Standard'; temp = st.mal; fas = 'klar'; }
+    else { lage = 'Energisnål'; temp = Math.max(SNAL, st.mal - (t - p.slut) / 60 * .8); fas = 'efter'; }
+  }
+  return { t, p, lage, temp, varmer, fas };
+}
+function rita() {
+  const L = laget(), lock = L.lage === 'Borta', badar = st.pump && !lock, snal = /snål/i.test(L.lage);
+  const o = { temp: kr(L.temp).replace(',', '.'), lock, badar, pump: badar, ljus: st.ljus && !lock, ljusFarg: st.ljusFarg, varmer: L.varmer, snal, ikon: snal ? LOV : lock ? KAL : '', anga: !lock && L.temp >= 34 };
+  const pill = badar ? ['Någon badar', 'spa'] : L.varmer ? [`Värmer till ${hm(L.p.bad)}`, 'varn'] : L.fas === 'vantar' ? [`Bad kl ${hm(L.p.bad)}`, 'spa'] : lock ? ['Borta-läge', ''] : L.temp >= st.mal - .3 ? ['Redo att bada', 'ok'] : [L.lage, ''];
+  const sub = badar ? `Bubblor${st.ljus ? ' och ljus' : ''} på · ${Math.max(1, klocka() - (st.badStart ?? klocka()))} min`
+    : L.varmer ? `Klar ca ${hm(L.p.klar)}` : L.fas === 'vantar' ? `Energisnålt tills ${hm(L.p.start)}` : lock ? 'Locket på · sparar energi' : L.fas === 'efter' ? 'Tillbaka i energisnålt' : snal ? 'Sparar energi' : L.fas === 'klar' ? `Klart till badet ${hm(L.p.bad)}` : `Stabil · Hålls på ${kr(st.mal)}°`;
+  const tf = L.varmer ? '#F0A54A' : L.fas === 'vantar' || snal ? '#5FD39A' : '#36B9E0';
+  const g = st.ljus && !lock ? st.ljusFarg : lock ? 'transparent' : tf;
+  const p = L.p;
+  let tl = '';
+  if (p) {
+    const a = Math.min(L.t, p.start - 60), b = Math.max(p.bad, L.t), pos = x => Math.max(0, Math.min(100, (x - a) / (b - a) * 100));
+    tl = `<div class="plan"><div class="plan-t"><i class="mdi mdi-calendar-clock"></i>Bad ${st.modalDag === 'Varje fredag' ? 'varje fredag' : st.modalDag.toLowerCase()} ${hm(p.bad)}<span><b onclick="oppna()">Ändra</b> · <b onclick="st.plan=null;rita()">Ta bort</b></span></div>
+      <div class="tl"><i style="left:0;width:${pos(p.start)}%;background:rgba(95,211,154,.55)"></i><i style="left:${pos(p.start)}%;width:${pos(p.bad) - pos(p.start)}%;background:linear-gradient(90deg,#F0A54A,#36B9E0)"></i><em style="left:${pos(L.t)}%"></em></div>
+      <div class="tl-l"><span>${hm(a)}</span><span>${L.t < p.start ? 'Börjar värma' : 'Värmer sedan'} ${hm(p.start)}</span><span>${hm(p.bad)}</span></div></div>`;
+  }
+  document.getElementById('kort').innerHTML = `<div class="kort live" style="--g:${g}">
+    <div class="kh"><span class="kh-ik"><i class="mdi mdi-hot-tub"></i></span><span class="kh-t">Spabad</span><span class="pill ${pill[1]}">${pill[0]}</span></div>
+    <div class="bild">${spaSvg(o)}</div>
+    <div class="temp"><div><div class="tnu" style="--tf:${tf}">${kr(L.temp)}<sup>°</sup></div><div class="tsub"><i class="mdi mdi-${L.varmer ? 'fire' : lock ? 'shield-home-outline' : L.fas === 'vantar' || snal ? 'leaf' : 'check-circle-outline'}"></i>${sub}</div></div>
+      <div class="steg"><button onclick="steg(-.5)">−</button><b>${kr(st.mal)}°<small>mål</small></b><button onclick="steg(.5)">+</button></div></div>
+    ${L.varmer ? `<div class="varm"><i style="width:${Math.max(4, (L.temp - SNAL) / (st.mal - SNAL) * 100)}%"></i></div>` : ''}
+    <div class="knappar"><button class="${badar ? 'pa' : ''}" onclick="bada()"><i class="mdi mdi-${badar ? 'stop-circle-outline' : 'pool'}"></i>${badar ? 'Avsluta bad' : 'Bada nu'}</button>
+      <button class="${st.pump ? 'pa' : ''}" onclick="pump()"><i class="mdi mdi-chart-bubble"></i>Bubblor</button>
+      <button class="${st.ljus ? 'pa ljus' : ''}" style="--lf:${st.ljusFarg}" onclick="st.ljus=!st.ljus;rita()"><i class="mdi mdi-lightbulb-on-outline"></i>Ljus</button></div>
+    ${st.ljus ? `<div class="farger">${FARGER.map(f => `<i class="${f === st.ljusFarg ? 'pa' : ''}" style="background:${f}" onclick="st.ljusFarg='${f}';rita()"></i>`).join('')}</div>` : ''}
+    <div class="lagen">${LAGEN.map(([l, n]) => `<span class="${l === L.lage ? 'pa' : ''}" onclick="st.lage='${l}';st.plan=null;rita()">${n}</span>`).join('')}</div>
+    ${tl || `<div class="planknapp" onclick="oppna()"><i class="mdi mdi-calendar-clock"></i>Planera bad</div>`}
+  </div>`;
+  const hemTxt = badar ? `Badar · ${kr(L.temp)}°` : L.varmer ? `Värmer · ${kr(L.temp)}° → ${kr(st.mal)}°` : L.fas === 'vantar' ? `Bad ${hm(L.p.bad)} · ${kr(L.temp)}°` : lock ? `Borta · ${kr(L.temp)}°` : `${pill[0]} · ${kr(L.temp)}°`;
+  document.getElementById('hem').innerHTML = `<div class="enh ${badar || L.varmer ? 'pa' : ''}"><span class="ik"><i class="mdi mdi-hot-tub"></i></span>${spaSvg(o)}<b>Spabad</b><small>${hemTxt}</small></div>`;
+  document.getElementById('kl').textContent = hm(L.t);
+  document.getElementById('info').innerHTML = p ? `Plan: energisnålt (${SNAL}°) till <b>${hm(p.start)}</b>, värmer ca ${TAKT}°/h och är klart ca <b>${hm(p.klar)}</b>, bad <b>${hm(p.bad)}</b>, tillbaka till energisnålt <b>${hm(p.slut)}</b>.` : 'Ingen plan just nu.';
+}
+function steg(d) { st.mal = Math.max(30, Math.min(40, st.mal + d)); rita(); }
+function pump() { st.pump = !st.pump; if (st.pump) st.badStart = klocka(); rita(); }
+function bada() { if (st.pump) { st.pump = false; st.ljus = false; } else { st.pump = true; st.ljus = true; st.badStart = klocka(); } rita(); }
+function modal() {
+  const bad = st.modalTid * 60, start = bad - FORVARM;
+  document.getElementById('dagar').innerHTML = ['Ikväll', 'Imorgon', 'Varje fredag'].map(x => `<span class="${x === st.modalDag ? 'pa' : ''}" onclick="st.modalDag='${x}';modal()">${x}</span>`).join('');
+  document.getElementById('val').innerHTML = [18, 19, 20, 21].map(h => `<span class="${h === st.modalTid ? 'pa' : ''}" onclick="st.modalTid=${h};modal()">${h}:00</span>`).join('');
+  document.getElementById('rk').innerHTML = `<div class="rk"><span>Temperatur</span><b>${kr(st.mal)}°</b></div><div class="rk"><span>Börjar värma</span><b>${hm(start)} <small style="color:var(--dim)">(2 h innan)</small></b></div><div class="rk"><span>Tillbaka till energisnålt</span><b>${hm(bad + 180)}</b></div>`;
+  document.getElementById('okk').textContent = `Planera bad ${st.modalTid}:00`;
+}
+function oppna() { modal(); document.getElementById('over').classList.add('pa'); }
+function stang() { document.getElementById('over').classList.remove('pa'); }
+document.getElementById('okk').onclick = () => { st.plan = st.modalTid; st.pump = false; st.ljus = false; stang(); rita(); };
+document.getElementById('tid').oninput = rita;
+rita();
+</script></body></html>

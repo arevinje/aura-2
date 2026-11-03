@@ -1,0 +1,87 @@
+# ═══════════════════════════════════════════════════════════════
+#  God natt – släck allt efter en nedräkning (Aura)
+#
+#  Med det här skriptet räknar Home Assistant ner i stället för skärmen.
+#  Då släcks allt även om surfplattan somnar eller om du startar från mobilen.
+#  Utan skriptet fungerar God natt-knappen ändå, men då måste skärmen
+#  där du tryckte vara igång tills det släcks.
+#
+#  1. Skapa en timer: Inställningar → Enheter och tjänster → fliken Hjälpare
+#     → Skapa hjälpare → Timer. Namn: Aura godnatt
+#     (den ska heta timer.aura_godnatt).
+#  2. Skapa skriptet: Inställningar → Automationer och scener → fliken Skript
+#     → Lägg till skript → Skapa nytt skript → ⋮ → Redigera i YAML.
+#     Ersätt allt med raderna från "alias: Aura godnatt" och nedåt och spara.
+#     Det ska heta script.aura_godnatt (syns under ⋮ → Information).
+#
+#  Aura skickar med vilka lampor och tv-apparater som ska släckas,
+#  så du behöver inte ändra något här.
+# ═══════════════════════════════════════════════════════════════
+alias: Aura godnatt
+description: Släcker lampor och tv efter en nedräkning. Startas från God natt-knappen i Aura.
+icon: mdi:weather-night
+mode: restart
+fields:
+  minuter:
+    description: Minuter innan det släcks (0 = direkt)
+    example: 5
+  lampor:
+    description: Lampor och uttag som ska släckas
+  tv:
+    description: Tv-apparater som ska stängas av
+  dimma:
+    description: Dimma lamporna en halv minut innan de släcks
+  larm:
+    description: Larmet som slås på i natt-läge (tomt = inget)
+sequence:
+  - variables:
+      lampor: "{{ lampor | default([]) }}"
+      tv: "{{ tv | default([]) }}"
+  # Nedräkningen – syns som en ring på God natt-knappen
+  - if:
+      - condition: template
+        value_template: "{{ (minuter | int(0)) > 0 }}"
+    then:
+      - action: timer.start
+        target:
+          entity_id: timer.aura_godnatt
+        data:
+          duration: "{{ ((minuter | int(5)) * 60) | timestamp_custom('%H:%M:%S', false) }}"
+      - wait_for_trigger:
+          - trigger: event
+            event_type: timer.finished
+            event_data:
+              entity_id: timer.aura_godnatt
+  # Varning: ljuset sänks till 15 % en halv minut innan det släcks
+  - if:
+      - condition: template
+        value_template: "{{ dimma | default(false) and lampor | select('match', 'light\\.') | select('is_state', 'on') | list | count > 0 }}"
+    then:
+      - action: light.turn_on
+        target:
+          entity_id: "{{ lampor | select('match', 'light\\.') | select('is_state', 'on') | list }}"
+        data:
+          brightness_pct: 15
+          transition: 3
+      - delay: 30
+  - if:
+      - condition: template
+        value_template: "{{ lampor | select('is_state', 'on') | list | count > 0 }}"
+    then:
+      - action: homeassistant.turn_off
+        target:
+          entity_id: "{{ lampor | select('is_state', 'on') | list }}"
+  - if:
+      - condition: template
+        value_template: "{{ tv | reject('is_state', ['off', 'standby', 'unavailable', 'unknown']) | list | count > 0 }}"
+    then:
+      - action: media_player.turn_off
+        target:
+          entity_id: "{{ tv | reject('is_state', ['off', 'standby', 'unavailable', 'unknown']) | list }}"
+  - if:
+      - condition: template
+        value_template: "{{ larm | default('') != '' }}"
+    then:
+      - action: alarm_control_panel.alarm_arm_night
+        target:
+          entity_id: "{{ larm }}"
