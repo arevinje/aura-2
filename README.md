@@ -1,6 +1,8 @@
 # Aura 2.0 – en premium-dashboard för Home Assistant
 
 > *A modern, animated Home Assistant dashboard in Swedish. One engine file you can update in seconds, one settings block for your home. Fits a landscape tablet without scrolling and works great on phones.*
+>
+> **🇬🇧 English version available** – See [English Installation](#-english-installation) below.
 
 Aura är en komplett dashboard för Home Assistant med ett modernt, animerat utseende i stil med en köpt app. Hela gränssnittet drivs av **en motor**, och ditt hem beskrivs i **ett enda inställningsblock** (`mitt_hem`).
 
@@ -223,3 +225,48 @@ Inga personuppgifter skickas. Radarn hämtar kartbitar för området runt hemmet
 ## 🙏 Tack
 
 Bygger på [button-card](https://github.com/custom-cards/button-card) av RomRider och ikonerna från [Material Design Icons](https://pictogrammers.com/library/mdi/).
+
+---
+
+## 🇬🇧 English Installation
+
+An English translation is available with customized entity configuration. This version preserves the original visual design, animations, and themes while translating all user-facing text.
+
+### Features
+- ✅ Full English UI (navigation, buttons, status messages)
+- ✅ All three themes (Light, Dark, Noir)
+- ✅ Original visual design preserved
+- ✅ Pre-configured entity templates
+- ✅ Safety-validated configuration
+
+### Quick Start
+
+1. **Requirements**
+   - Home Assistant 2024.10 or later
+   - [button-card](https://github.com/custom-cards/button-card) from HACS
+
+2. **Installation**
+   - Copy `www/aura/motor.js` to `/config/www/aura/motor.js`
+   - Create new dashboard with provided YAML
+   - Set `_language: en` in `mitt_hem` block
+   - Customize entity IDs for your home
+
+3. **Documentation**
+   - 📖 See detailed installation guide in repository
+   - 🧪 Offline test suite available for validation
+   - ⚠️ Review safety documentation if you have non-standard hardware
+
+### Configuration Example
+
+```yaml
+button_card_templates:
+  mitt_hem:
+    variables:
+      _language: en          # 'en' for English, 'sv' for Swedish
+      _hem_namn: Home
+      _tema: mork            # ljus, mork, or noir
+      # ... customize your entities below
+```
+
+### Support
+This English version is a community customization. For questions about the original Swedish version, see the documentation above.

@@ -2,15 +2,78 @@
    AURA 2 · motorn bakom dashboarden
    Du behöver inte ändra något här – alla inställningar görs i "mitt_hem".
    ═══════════════════════════════════════════════════════════════════════════ */
-const VER = "2.0.2";
+const VER = "2.0.2-en";
 if (!window.Aura || window.Aura.v !== VER) {
   const gammal = window.Aura;
   if (gammal && gammal.timer) clearInterval(gammal.timer);
+  
+  // ═══════════ English Translations (set _language: 'en' in mitt_hem) ═══════════
+  const TRANSLATIONS = {
+    sv: {}, // Swedish is default, no translation needed
+    en: {
+      // Navigation
+      'Hem': 'Home', 'Ljus': 'Lights', 'Gardiner': 'Blinds', 'Garage': 'Garage',
+      'Värme': 'Heat', 'Media': 'Media', 'Energi': 'Energy', 'Säkerhet': 'Security',
+      'Väder': 'Weather', 'Hushåll': 'Household',
+      'Översikt': 'Overview', 'Belysning': 'Lighting', 'Gardiner & portar': 'Blinds & doors',
+      'Värme & klimat': 'Heat & climate', 'Musik & media': 'Music & media',
+      'Hushållet': 'Household',
+      // States & actions
+      'På': 'On', 'Av': 'Off', 'Öppen': 'Open', 'Stängd': 'Closed', 'Fördragen': 'Closed',
+      'Öppnas …': 'Opening…', 'Dras för …': 'Closing…', 'Öppna': 'Open', 'Dra för': 'Close',
+      'Stäng': 'Close', 'Stoppa': 'Stop', 'Pausa': 'Pause', 'Fortsätt': 'Resume',
+      'Hem': 'Home', 'Avbryt': 'Cancel', 'Ja': 'Yes', 'Nej': 'No',
+      // Good night mode
+      'God natt': 'Good night', 'God natt!': 'Good night!',
+      'God natt-läge på': 'Good night mode on', 'Släcker nu': 'Turning off now',
+      'Ljuset är dimmat – släcks strax': 'Lights dimmed – turning off soon',
+      'Ljuset är dimmat och släcks strax.': 'Lights are dimmed and will turn off soon.',
+      'Släcks kl': 'Turning off at',
+      'Dimma först': 'Dim first', 'Ljuset sänks en halv minut innan': 'Lights dim 30 seconds before',
+      'Larma natt': 'Arm night', 'Skalskyddet slås på': 'Shell protection enabled',
+      // Lights
+      'Scener': 'Scenes', 'Ljuseffekter': 'Light effects', 'Ljuseffekt': 'Light effect',
+      'Igång': 'Running', 'Partyläge': 'Party mode',
+      'Ljusstyrka': 'Brightness',
+      // Security
+      'Hemmet är säkrat': 'Home is secured', 'Larmet är av': 'Alarm is off',
+      'LARMET GÅR': 'ALARM TRIGGERED',
+      'Hemma': 'Home', 'Borta': 'Away', 'Natt': 'Night',
+      'Alla hemma': 'Everyone home', 'hemma': 'home',
+      // Garage (CRITICAL: User safety strings)
+      'Aktivera garageporten': 'Activate garage door',
+      'Garagen': 'Garage', 'Stängd': 'Closed', 'Inte stängd': 'Not closed',
+      // Motion & sensors
+      'Nyligen': 'Recently', 'sedan': 'ago', 'min sedan': 'min ago', 'tim sedan': 'h ago',
+      'd sedan': 'd ago', 'nyss': 'just now',
+      // Weather
+      'Vädervarning': 'Weather warning', 'varning': 'warning', 'varningar': 'warnings',
+      'Inga varningar': 'No warnings', 'Väderkoll': 'Weather check',
+      'just nu': 'now',
+      // Energy
+      'Billigt': 'Cheap', 'Dyrt': 'Expensive', 'Normalt': 'Normal',
+      'idag': 'today', 'denna timme': 'this hour', 'den här månaden': 'this month',
+      // Vacuum
+      'Städa nu': 'Clean now', 'Bada nu': 'Start now', 'Bubblor': 'Bubbles',
+      // Time
+      'Idag': 'Today', 'Igår': 'Yesterday', 'Imorgon': 'Tomorrow',
+      // Common
+      'Ej ansluten': 'Not connected', 'Okänd': 'Unknown', 'Ingen': 'None',
+      'Välkommen hem': 'Welcome home', 'Något gick fel': 'Something went wrong',
+      'Allt ser bra ut': 'All looks good', 'Inga förslag just nu': 'No suggestions'
+    }
+  };
   const A = window.Aura = {
     v: VER, kort: new Set(), opt: {}, kal: {}, todo: {}, todoSub: {}, vader: {}, vaderSub: {},
     sida: 'hem', rum: 'oversikt', spelare: '', mflik: 'bib', sok: null, bib: {}, kalla: {}, album: {}, spar: {}, ko: {},
-    kaffeVal: null, las: null, drag: null, skalK: null, skalC: '', S: {}
+    kaffeVal: null, las: null, drag: null, skalK: null, skalC: '', S: {}, lang: 'sv'
   };
+  // Translation function: t('Swedish text') returns translated text or original
+  const t = (text) => {
+    const lang = A.lang || 'sv';
+    return (TRANSLATIONS[lang] && TRANSLATIONS[lang][text]) || text;
+  };
+  A.t = t;
   const minne = (n, v) => { try { if (v === undefined) return localStorage.getItem('aura.' + n); localStorage.setItem('aura.' + n, v); } catch (e) {} return null; };
   A.sida = minne('sida') || 'hem'; A.rum = minne('rum') || 'oversikt'; A.spelare = minne('spelare') || ''; A.dammVal = +minne('damm') || 0; A.temaVal = minne('tema') || '';
   A.bussP = (() => { try { const x = JSON.parse(minne('buss') || 'null'); return x && x.t > Date.now() - 10 * 6e4 ? x : null; } catch (e) { return null; } })();
@@ -123,6 +186,7 @@ if (!window.Aura || window.Aura.v !== VER) {
   const arBild = (x) => /\.(png|jpe?g|webp|gif|svg)(\?.*)?$/i.test(String(x || '')) || /^(\/|https?:)/.test(String(x || ''));
   A.konf = (v) => {
     A._v = v;
+    A.lang = String(v._language || 'sv').toLowerCase().slice(0, 2);
     const h = A.hass;
     const lampa = (l) => typeof l === 'string' ? { e: l } : { e: l.entity || l.e, namn: l.namn, ikon: l.ikon, typ: l.typ };
     // Spabad: _spa: { prefix: fridkulla } eller _spa: fridkulla. Utan inställning hittas det via Watercare-väljaren (Gecko). _spa: false stänger av
@@ -239,8 +303,8 @@ if (!window.Aura || window.Aura.v !== VER) {
   ];
   A.sidor = (k) => A.SIDOR.filter(([id]) => (id !== 'portar' || k.portar.length) && (id !== 'varme' || k.varme.length) &&
     (id !== 'energi' || k.el || A.harSolBatt(k) || k.elbil) && (id !== 'sakerhet' || k.larm || k.kameror.length || k.dorrar.length) && (id !== 'vader' || k.vader))
-    // Bara garage → sidan heter Garage
-    .map(x => x[0] === 'portar' && k.portar.every(p => p.typ === 'garage') ? ['portar', 'Garage', 'mdi:garage-variant', 'Garage'] : x);
+    .map(x => x[0] === 'portar' && k.portar.every(p => p.typ === 'garage') ? ['portar', t('Garage'), 'mdi:garage-variant', t('Garage')] : x)
+    .map(([id, namn, ikon, aria]) => [id, t(namn), ikon, t(aria)]);
 
   // ═════════════ Produktbilder (ritade, tänds och rör sig) ═════════════
   const DEFS = `<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
