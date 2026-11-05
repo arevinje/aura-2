@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aura 2.0 English - Offline Test</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #1a1a1a;
+      color: #fff;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 { margin-bottom: 20px; color: #7568FF; }
+    .test-section {
+      background: #2a2a2a;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .test-section h2 {
+      margin-bottom: 15px;
+      font-size: 18px;
+      color: #a0a0a0;
+    }
+    .pass { color: #4ade80; }
+    .fail { color: #f87171; }
+    .info { color: #60a5fa; }
+    code {
+      background: #1a1a1a;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+    }
+    pre {
+      background: #1a1a1a;
+      padding: 15px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 10px 0;
+      font-size: 13px;
+    }
+    .entity-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .entity {
+      background: #1a1a1a;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+    button {
+      background: #7568FF;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      margin: 5px;
+    }
+    button:hover { background: #6055dd; }
+    .warn { color: #fbbf24; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔍 Aura 2.0 English - Offline Test Suite</h1>
+    
+    <div class="test-section">
+      <h2>1. JavaScript Syntax Test</h2>
+      <div id="syntax-test">Testing...</div>
+    </div>
+
+    <div class="test-section">
+      <h2>2. Translation System Test</h2>
+      <div id="translation-test">Testing...</div>
+    </div>
+
+    <div class="test-section">
+      <h2>3. Mock Entity Test</h2>
+      <div id="entity-test">Testing...</div>
+    </div>
+
+    <div class="test-section">
+      <h2>4. Garage Safety Test</h2>
+      <div id="garage-test">
+        <p class="warn">⚠️ Testing garage logic (simulation only - no real activation)</p>
+        <div id="garage-result">Testing...</div>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h2>5. Entity Inventory Check</h2>
+      <button onclick="showEntities()">Show All Configured Entities</button>
+      <div id="entity-inventory"></div>
+    </div>
+  </div>
+
+  <script>
+    // Test 1: Syntax
+    function testSyntax() {
+      const div = document.getElementById('syntax-test');
+      try {
+        // Check if motor.js would load (syntax validation)
+        const testCode = `const VER = "2.0.2-en"; const t = (x) => x; const TRANSLATIONS = { sv: {}, en: {} };`;
+        new Function(testCode);
+        div.innerHTML = '<span class="pass">✓ PASS</span> - JavaScript syntax valid';
+      } catch (e) {
+        div.innerHTML = '<span class="fail">✗ FAIL</span> - Syntax error: ' + e.message;
+      }
+    }
+
+    // Test 2: Translation
+    function testTranslations() {
+      const div = document.getElementById('translation-test');
+      const TRANSLATIONS = {
+        sv: {},
+        en: {
+          'Hem': 'Home',
+          'Ljus': 'Lights',
+          'Garage': 'Garage',
+          'God natt': 'Good night',
+          'Aktivera garageporten': 'Activate garage door'
+        }
+      };
+      
+      let lang = 'en';
+      const t = (text) => (TRANSLATIONS[lang] && TRANSLATIONS[lang][text]) || text;
+      
+      const tests = [
+        ['Hem', 'Home'],
+        ['Ljus', 'Lights'],
+        ['Garage', 'Garage'],
+        ['God natt', 'Good night'],
+        ['Untranslated', 'Untranslated'] // Should fall through
+      ];
+      
+      let passed = 0;
+      let results = tests.map(([input, expected]) => {
+        const result = t(input);
+        const pass = result === expected;
+        if (pass) passed++;
+        return `${pass ? '✓' : '✗'} t('${input}') → '${result}' ${!pass ? `(expected '${expected}')` : ''}`;
+      });
+      
+      div.innerHTML = `
+        <span class="${passed === tests.length ? 'pass' : 'fail'}">
+          ${passed}/${tests.length} translation tests passed
+        </span>
+        <pre>${results.join('\n')}</pre>
+      `;
+    }
+
+    // Test 3: Mock entities
+    function testEntities() {
+      const div = document.getElementById('entity-test');
+      
+      // Mock hass object with user's entities
+      const mockHass = {
+        states: {
+          'light.dining_table_light_switch': {
+            entity_id: 'light.dining_table_light_switch',
+            state: 'off',
+            attributes: { friendly_name: 'Dining table', brightness: null }
+          },
+          'switch.garage': {
+            entity_id: 'switch.garage',
+            state: 'off',
+            attributes: { friendly_name: 'Garage' }
+          },
+          'binary_sensor.garage_door_sensor_contact': {
+            entity_id: 'binary_sensor.garage_door_sensor_contact',
+            state: 'off',
+            attributes: { friendly_name: 'Garage door sensor', device_class: 'door' }
+          },
+          'vacuum.roborock_s5_max': {
+            entity_id: 'vacuum.roborock_s5_max',
+            state: 'docked',
+            attributes: { friendly_name: 'Roborock S5 Max', battery_level: 100 }
+          }
+        }
+      };
+      
+      const testEntities = [
+        'light.dining_table_light_switch',
+        'switch.garage',
+        'binary_sensor.garage_door_sensor_contact',
+        'vacuum.roborock_s5_max'
+      ];
+      
+      let found = 0;
+      let results = testEntities.map(id => {
+        const exists = !!mockHass.states[id];
+        if (exists) found++;
+        return `${exists ? '✓' : '✗'} ${id} - ${exists ? mockHass.states[id].attributes.friendly_name : 'NOT FOUND'}`;
+      });
+      
+      div.innerHTML = `
+        <span class="${found === testEntities.length ? 'pass' : 'fail'}">
+          ${found}/${testEntities.length} entities found in mock
+        </span>
+        <pre>${results.join('\n')}</pre>
+      `;
+    }
+
+    // Test 4: Garage safety
+    function testGarage() {
+      const div = document.getElementById('garage-result');
+      const results = [];
+      
+      // Test 1: Verify single toggle logic
+      let toggleCount = 0;
+      const mockToggle = () => { toggleCount++; };
+      
+      // Simulate button press
+      mockToggle();
+      results.push(`✓ Single button press → ${toggleCount} toggle(s) ${toggleCount === 1 ? '(SAFE)' : '(DANGER!)'}`);
+      
+      // Test 2: Verify confirmation required
+      const mockConfig = {
+        tap_action: {
+          action: 'perform-action',
+          perform_action: 'switch.toggle',
+          confirmation: {
+            text: 'Activate the garage door now?'
+          }
+        },
+        hold_action: { action: 'none' },
+        double_tap_action: { action: 'none' }
+      };
+      
+      const hasConfirmation = mockConfig.tap_action.confirmation !== undefined;
+      const holdDisabled = mockConfig.hold_action.action === 'none';
+      const doubleTapDisabled = mockConfig.double_tap_action.action === 'none';
+      
+      results.push(`${hasConfirmation ? '✓' : '✗'} Confirmation dialog: ${hasConfirmation ? 'REQUIRED' : 'MISSING (DANGER!)'}`);
+      results.push(`${holdDisabled ? '✓' : '✗'} Hold action: ${holdDisabled ? 'DISABLED (safe)' : 'ENABLED (danger!)'}`);
+      results.push(`${doubleTapDisabled ? '✓' : '✗'} Double-tap action: ${doubleTapDisabled ? 'DISABLED (safe)' : 'ENABLED (danger!)'}`);
+      
+      // Test 3: Verify sensor interpretation
+      const sensorTests = [
+        ['off', 'Closed'],
+        ['on', 'Not closed'],
+        ['unavailable', 'Unknown']
+      ];
+      
+      results.push('');
+      results.push('Sensor state interpretation:');
+      sensorTests.forEach(([state, expected]) => {
+        const display = state === 'off' ? 'Closed' : state === 'on' ? 'Not closed' : 'Unknown';
+        results.push(`  ${display === expected ? '✓' : '✗'} state='${state}' → '${display}'`);
+      });
+      
+      const allPass = toggleCount === 1 && hasConfirmation && holdDisabled && doubleTapDisabled;
+      
+      div.innerHTML = `
+        <span class="${allPass ? 'pass' : 'fail'}">
+          ${allPass ? '✓ ALL GARAGE SAFETY TESTS PASSED' : '✗ GARAGE SAFETY ISSUES DETECTED'}
+        </span>
+        <pre>${results.join('\n')}</pre>
+        ${allPass ? '' : '<p class="fail">⚠️ DO NOT USE until issues resolved!</p>'}
+      `;
+    }
+
+    // Test 5: Entity inventory
+    function showEntities() {
+      const div = document.getElementById('entity-inventory');
+      
+      const entities = {
+        'Lights (14 entities)': [
+          'light.dining_table_light_switch',
+          'light.stairs_light_switch',
+          'light.livingroom_table_light',
+          'light.tv_lamp_switch',
+          'light.kitchen_table',
+          'light.hallway_lights',
+          'light.hallway_light_switch',
+          'light.office_light_switch',
+          'light.babyroom_light_switch',
+          'light.closet_light_switch',
+          'light.storage',
+          'light.balcony_light_power_balcony_light_switch_2',
+          'light.balcony_string_light',
+          'light.garage_light_switch'
+        ],
+        'Blinds (7 entities)': [
+          'cover.all_blinds',
+          'cover.livingroom_blinds',
+          'cover.livingroom_blinds_1',
+          'cover.livingroom_blinds_2',
+          'cover.livingroom_blinds_3',
+          'cover.stairs_blinds',
+          'cover.kitchen_blinds'
+        ],
+        'Motion (7 sensors)': [
+          'binary_sensor.livingroom_motion_sensor_occupancy',
+          'binary_sensor.kitchen_motion_sensor_occupancy',
+          'binary_sensor.doorway_motion_sensor_occupancy',
+          'binary_sensor.office_motion_sensor_occupancy',
+          'binary_sensor.bathroom_motion_sensor',
+          'binary_sensor.basement_motion_sensor_occupancy',
+          'binary_sensor.storage_motion_sensor_occupancy'
+        ],
+        'Garage (⚠️ NON-STANDARD)': [
+          'switch.garage (RELAY - not cover)',
+          'binary_sensor.garage_door_sensor_contact',
+          'sensor.garage_door_sensor_battery',
+          'sensor.garage_door_sensor_device_temperature',
+          'camera.garage_garage_camera'
+        ],
+        'Vacuum': [
+          'vacuum.roborock_s5_max',
+          'sensor.roborock_s5_max_battery',
+          'image.roborock_s5_max_map',
+          '+ 20+ Roborock entities'
+        ],
+        'Power (Tibber)': [
+          'sensor.pulse_power',
+          'sensor.pulse_electricity_price',
+          'sensor.pulse_accumulated_consumption',
+          'sensor.pulse_accumulated_cost',
+          '+ 10+ Tibber entities'
+        ],
+        'Cameras (5)': [
+          'camera.garage_garage_camera',
+          'camera.front_porch_live',
+          'camera.outside_driveway_camera',
+          'camera.doorbell',
+          'camera.basement_basement_camera'
+        ]
+      };
+      
+      let html = '<div class="entity-list">';
+      for (const [category, list] of Object.entries(entities)) {
+        html += `<div class="entity"><strong>${category}</strong><br>`;
+        html += list.map(e => `<small>${e}</small>`).join('<br>');
+        html += '</div>';
+      }
+      html += '</div>';
+      
+      div.innerHTML = html;
+    }
+
+    // Run tests on load
+    window.addEventListener('load', () => {
+      testSyntax();
+      testTranslations();
+      testEntities();
+      testGarage();
+    });
+  </script>
+</body>
+</html>

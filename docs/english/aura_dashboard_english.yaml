@@ -1,0 +1,356 @@
+# ════════════════════════════════════════════════════════════════════════════
+#  AURA 2.0 – English Customization
+#  Custom dashboard with English UI and your specific entities
+#  
+#  Installation: Settings → Dashboards → Add → "New dashboard from scratch"
+#  → Open → Edit → ⋮ → Raw configuration editor → Paste → Save
+#
+#  All settings customized for your home are in "mitt_hem" below.
+# ════════════════════════════════════════════════════════════════════════════
+kiosk_mode:
+  mobile_settings:
+    custom_width: 1400
+    hide_header: true
+button_card_templates:
+  mitt_hem:
+    variables:
+      # ────────── Language & appearance ──────────
+      _language: en               # 'en' for English, 'sv' for Swedish
+      _hem_namn: Home
+      _plats: ''                  # Your location (used for weather display)
+      _tema: mork                 # ljus (cream & bronze), mork (navy & indigo), noir (black & champagne)
+      _accent: ''                 # Empty = theme default, or custom color like '#7568FF'
+      _bakgrundsbild: ''          # Home page header image from config/www/aura/bilder/ (empty = pattern)
+
+      # ────────── Rooms & lights ──────────
+      # Each room becomes a card on Home and a row of light tiles under Lights.
+      # Empty list (_rum: []) = auto-detect rooms from Home Assistant areas.
+      _rum:
+        - namn: Living room
+          ikon: mdi:sofa-outline
+          temp: ''                # sensor.livingroom_temperature if available
+          fukt: ''                # sensor.livingroom_humidity if available
+          bild: ''                # Optional room image
+          lampor:
+            - entity: light.dining_table_light_switch
+              namn: Dining table
+              ikon: mdi:ceiling-light
+              typ: pendel
+            - entity: light.stairs_light_switch
+              namn: Stairs
+              ikon: mdi:stairs
+              typ: tak
+            - entity: light.livingroom_table_light
+              namn: Table lamp
+              ikon: mdi:lamp
+              typ: bord
+            - entity: light.tv_lamp_switch
+              namn: TV lamp
+              ikon: mdi:lamp-outline
+              typ: bord
+        - namn: Kitchen
+          ikon: mdi:silverware-fork-knife
+          lampor:
+            - entity: light.kitchen_table
+              namn: Kitchen light
+              ikon: mdi:ceiling-light
+              typ: pendel
+        - namn: Hallway
+          ikon: mdi:door-open
+          lampor:
+            - entity: light.hallway_lights
+              namn: Inner hallway
+              ikon: mdi:ceiling-light
+              typ: klot
+            - entity: light.hallway_light_switch
+              namn: Hallway
+              ikon: mdi:wall-sconce
+              typ: vagg
+        - namn: Office
+          ikon: mdi:desk
+          lampor:
+            - entity: light.office_light_switch
+              namn: Office light
+              ikon: mdi:ceiling-light
+              typ: tak
+        - namn: Baby room
+          ikon: mdi:baby-carriage
+          lampor:
+            - entity: light.babyroom_light_switch
+              namn: Baby room
+              ikon: mdi:ceiling-light
+              typ: tak
+        - namn: Closet
+          ikon: mdi:hanger
+          lampor:
+            - entity: light.closet_light_switch
+              namn: Closet
+              ikon: mdi:lightbulb
+              typ: glod
+        - namn: Storage
+          ikon: mdi:package-variant
+          lampor:
+            - entity: light.storage
+              namn: Storage
+              ikon: mdi:lightbulb
+              typ: led
+        - namn: Balcony
+          ikon: mdi:balcony
+          lampor:
+            - entity: light.balcony_light_power_balcony_light_switch_2
+              namn: Balcony light
+              ikon: mdi:outdoor-lamp
+              typ: vagg
+            - entity: light.balcony_string_light
+              namn: String lights
+              ikon: mdi:string-lights
+              typ: led
+        - namn: Garage
+          ikon: mdi:garage
+          lampor:
+            - entity: light.garage_light_switch
+              namn: Garage light
+              ikon: mdi:lightbulb
+              typ: glod
+
+      # ────────── Scenes & light effects ──────────
+      _scener: []                 # Empty = all scenes, or list specific ones
+      _slack_allt: ''             # script to turn off all lights (optional)
+      _slack_minuter: 5
+      _ljuseffekt: ''             # input_select for light effects (optional)
+      _ljuseffekt_script: ''
+      _ljuseffekter: []           # Empty = no effects row
+      _party_script: ''           # Party mode script (optional)
+      _party_lampor: []           # Empty = all color lights
+
+      # ────────── Media ──────────
+      _mediaspelare: []           # Empty list = all media players
+      _party_skarm: ''            # Music Assistant party screen URL (optional)
+      _party_url: ''              # Party guest link (optional)
+
+      # ────────── Energy (Tibber) ──────────
+      _elpris: sensor.pulse_electricity_price
+      _el_prefix: pulse           # Monthly cost read from sensor.pulse_monthly_cost
+      _elomrade: ''               # SE1, SE2, SE3, or SE4 (Swedish price regions)
+      _el_billig: 1               # kr/kWh – below this is cheap
+      _el_dyr: 2                  # kr/kWh – above this is expensive
+
+      # ────────── Solar panels (leave empty until you have solar) ──────────
+      _sol_effekt: ''             # Current solar production, W or kW
+      _sol_idag: ''               # Produced today, kWh
+      _sol_salt: ''               # Sold to grid today, kWh (optional)
+      _husets_effekt: ''          # House consumption now, W (optional)
+      _sol_prognos: ''            # Forecast.Solar: today's forecast, kWh (optional)
+      _sol_max_kw: 0              # System peak capacity in kW (optional)
+
+      # ────────── Home battery (leave empty if you don't have one) ──────────
+      _batteri_niva: ''           # Battery level %
+      _batteri_effekt: ''         # Battery power in/out, W or kW
+      _batteri_effekt_omvand: false  # true if sensor shows PLUS when discharging
+      _batteri_kapacitet: 0       # Battery size in kWh
+
+      # ────────── Electric vehicle (remove # to enable) ──────────
+      # _elbil:
+      #   namn: My EV
+      #   prefix: my_ev             # Entity prefix, e.g. sensor.my_ev_state_of_charge
+      #   kapacitet: 86             # Battery size in kWh
+      #   laddeffekt: 11            # Charger power in kW
+      #   farg: '#59606A'           # Car color on the diagram
+      #   laddbox: switch.charger   # Optional switch to start charging
+
+      # ────────── Consumption (optional – Tibber Pulse found automatically via _el_prefix) ──────────
+      _el_effekt: sensor.pulse_power           # House consumption now, W
+      _el_forbrukning_idag: sensor.pulse_accumulated_consumption    # Used today, kWh
+      _el_kostnad_idag: sensor.pulse_accumulated_cost               # Cost today, kr
+      _el_apparater:              # "What does it cost?" – rough consumption per run
+        - namn: Dishwasher
+          ikon: mdi:dishwasher
+          kwh: 1.1
+          timmar: 2
+        - namn: Washing machine
+          ikon: mdi:washing-machine
+          kwh: 1
+          timmar: 2
+        - namn: Dryer
+          ikon: mdi:tumble-dryer
+          kwh: 2.5
+          timmar: 2
+
+      # ────────── Blinds, curtains, & GARAGE (SAFETY CRITICAL) ──────────
+      # Empty lists = Aura finds them by device_class (awning, curtain, blind/shade/shutter, garage/gate)
+      _markiser: []
+      _gardiner: []
+      _rullgardiner: []
+      # ⚠️ GARAGE SAFETY: Custom implementation required for relay-based garage door
+      # User's setup: switch.garage is a RELAY – ANY state change activates the door.
+      # binary_sensor.garage_door_sensor_contact: off=closed, on=NOT closed
+      # Standard cover entity does NOT work for this hardware.
+      _garage: []                 # Leave empty – custom garage implementation below
+      _portar_auto: false         # Disable auto-detection to use custom garage only
+
+      _markis_vind: 9             # Smart suggestion: retract awning at this wind speed (m/s)
+      _solskydd_temp: 24          # Smart suggestion: lower blinds when this warm inside (or 20° outside)
+      _solskydd_lage: 30          # Sun protection position: how far up blinds should be (%)
+
+      # ────────── Heating & climate (climate entities) ──────────
+      _varme: []                  # Empty = all climate entities. Or specify with entity/namn/typ (luft, vp, golv, element)
+      _varme_sank: 2              # How many degrees "Lower" and suggestions reduce temperature
+      _varme_borta_min: 60        # Smart suggestion: lower heat when nobody home for this many minutes
+
+      # ────────── Security ──────────
+      _larm: ''                   # alarm_control_panel.your_alarm
+      _larm_skarm: false          # Fullscreen countdown when arming/disarming (disable for testing)
+      _dorrar:
+        - binary_sensor.garage_door_sensor_contact
+      _fonster: []
+      _las: []
+      _rorelse:
+        - binary_sensor.livingroom_motion_sensor_occupancy
+        - binary_sensor.kitchen_motion_sensor_occupancy
+        - binary_sensor.doorway_motion_sensor_occupancy
+        - binary_sensor.office_motion_sensor_occupancy
+        - binary_sensor.bathroom_motion_sensor
+        - binary_sensor.basement_motion_sensor_occupancy
+        - binary_sensor.storage_motion_sensor_occupancy
+      _larmgivare: []             # Smoke/water/gas alarms – fullscreen warning when triggered
+      _vattenventil: ''           # Main water valve for "Close main valve" button on leak
+      _kameror:                   # Empty list = all cameras (Frigate first)
+        - camera.garage_garage_camera
+        - camera.front_porch_live
+        - camera.outside_driveway_camera
+        - camera.doorbell
+        - camera.basement_basement_camera
+      _kamera_anvandare: []       # Who can see cameras (first names, full names, or admin). Empty = everyone
+      _frigate: false             # Frigate instance for events with images & clips (false = off)
+      _handelser: false           # Events timeline on security page (false = off)
+      _forslag_oppen_minuter: 10  # Smart suggestion when door/window open this long
+      _forslag_av: []             # Disable suggestions you don't want, e.g. [norrsken, batt, todo]
+      _kaffe_timmar: 2            # Smart suggestion: "Coffee maker is on" after this many hours
+      _batteri_varning: 15        # Smart suggestion: "Change battery" below this percent
+      _morgon_fran: '04:30'       # Smart suggestion: turn on lights when dark between these times
+      _morgon_till: '10:00'
+      _morgon_lampor: []          # Empty = all lights in rooms with "living", "kitchen", or "hall"
+      _morgon_kaffe: false        # After "Yes, turn on" suggest turning on coffee maker
+      _kvall_kl: 22               # Smart suggestion: after this time suggest "turn off all & TV"
+      _kvall_dagar: vardag        # vardag (Mon-Fri) or alla (all days)
+      _kvall_minuter: 5           # Countdown from when you press until all turns off
+      # _godnatt_minuter: 5       # Default time in Good night button. _godnatt: false removes button
+
+      # ────────── Weather & day ──────────
+      _vader: ''                  # weather.your_weather
+      _pollen_prefix: ''          # sensor.pollen_your_city_ (Swedish Pollenrapporten integration)
+      _pollen_plats: ''
+      _smhi_prefix: ''            # SMHI sensors: wind, gusts, direction, cloud base, precipitation
+      _smhi_varning: ''           # SMHI weather warnings (Sweden only)
+      _smhi_varning_aktiv: ''
+      _mane: ''                   # sensor.moon_phase
+      _radar: false               # true = animated rain radar at top of weather card
+      _norrsken: false            # Aurora forecast (NOAA) under Night sky
+      _temp_inne: ''              # Indoor temperature for "Ventilate" suggestion
+      _fukt_inne: ''              # Indoor humidity for "Ventilate" – empty = humidity sensor in room with _temp_inne
+      _att_gora: ''               # todo.to_do_list
+      _kalendrar: []              # Empty list = all calendars
+
+      # ────────── Household (remove line or leave empty if you don't have the item) ──────────
+      _kaffe: ''                  # Home Connect entity prefix, e.g. kaffemaskin
+      _kaffe_modell: ''
+      _dammsugare:                # One or more robot vacuums
+        - entity: vacuum.roborock_s5_max
+          namn: Roborock S5 Max
+          batteri: sensor.roborock_s5_max_battery
+          popup: ''               # Optional – opens popup (bubble-card) instead of "More info"
+      _dammsugare_karta: image.roborock_s5_max_map
+      _vaxter: []                 # Plant sensors
+      _buss: ''                   # Transit sensor (Swedish Västtrafik integration)
+      _buss_namn: ''
+      _buss_linje: ''
+      _buss_forvarning: 10        # Voice reminder this many minutes before departure
+      _buss_fonster: 30           # Show departures in next N minutes
+      _tts: ''                    # TTS service for voice reminders
+      _tts_hogtalare: ''          # Speaker for TTS
+      _server_felkod_enhet: sda1  # Disk device for server monitoring
+
+      # Motor loading (DO NOT CHANGE – security critical)
+      _motor_url: '/local/aura/motor.js'   # Must be local path, NEVER external URL
+
+    tap_action:
+      action: none
+    triggers_update: all
+    show_icon: false
+    show_name: false
+    show_state: false
+    styles:
+      grid:
+        - position: relative
+      card:
+        - display: block
+        - padding: 0
+        - background: none
+        - box-shadow: none
+        - border-radius: 0
+    custom_fields:
+      aura:
+        card:
+          type: custom:button-card
+          template: _aura_ram
+
+  # ═════════════ Engine loader (DO NOT EDIT) ═════════════
+  _aura_ram:
+    tap_action:
+      action: none
+    show_icon: false
+    show_name: false
+    show_state: false
+    styles:
+      grid:
+        - position: relative
+      card:
+        - padding: 0
+        - background: none
+    custom_fields:
+      x:
+        card:
+          type: markdown
+          content: |
+            <script>
+            (() => {
+              const el = document.currentScript.parentElement;
+              if (el._auraLaddad) return;
+              el._auraLaddad = true;
+              const kort = el.closest('hui-card, ha-card');
+              kort.style.cssText = 'padding:0;background:none;box-shadow:none;border:0';
+              kort.classList.add('aura-ram');
+              const variables = kort._config?.template?.variables || kort._config?.variables || {};
+              const url = variables._motor_url || '/local/aura/motor.js';
+              const kod = localStorage.getItem('aura.motor');
+              if (kod) { try { new Function('hass', kod)(kort.hass); } catch (e) { console.error('Aura (cache):', e); localStorage.removeItem('aura.motor'); } }
+              const xhr = new XMLHttpRequest();
+              xhr.open('GET', url + '?_=' + Date.now(), false);
+              try { xhr.send(); if (xhr.status === 200 && xhr.responseText) { localStorage.setItem('aura.motor', xhr.responseText); new Function('hass', xhr.responseText)(kort.hass); } } catch (e) { console.error('Aura (sync):', e); }
+              fetch(url + '?_=' + Date.now()).then(r => r.ok ? r.text() : null).then(t => {
+                if (t && t !== kod) { localStorage.setItem('aura.motor', t); try { new Function('hass', t)(kort.hass); } catch (e) { console.error('Aura:', e); } }
+              }).catch(e => console.error('Aura (fetch):', e));
+            })();
+            </script>
+
+# ═════════════ Dashboard views ═════════════
+views:
+  - title: Home
+    path: home
+    type: custom:button-card
+    template: mitt_hem
+
+# ═════════════ CUSTOM GARAGE IMPLEMENTATION (SAFETY CRITICAL) ═════════════
+# Standard aura-2 cover cards do NOT work with relay-based garage doors.
+# This implementation ensures exactly ONE switch.toggle per confirmed button press.
+# 
+# Technical details:
+# - switch.garage: ANY state change (off→on OR on→off) activates the door
+# - binary_sensor.garage_door_sensor_contact: off=closed, on=NOT closed
+# - Contact sensor cannot distinguish opening/open/closing states
+# - NO cover.garage_door entities (broken/unreliable)
+# - NO scripts that pulse or double-toggle
+# - NO open/close/stop assumptions
+#
+# This must be added to dashboard manually or via separate garage card if needed.
+# User will integrate into their specific workflow after validation.
