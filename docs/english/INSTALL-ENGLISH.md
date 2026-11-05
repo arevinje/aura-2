@@ -7,11 +7,12 @@ This installation includes safety-critical garage door handling. Read the entire
 ## Prerequisites
 
 ### Required
-1. **Home Assistant 2024.10 or later**
-2. **button-card** from HACS
-   - Open HACS → Frontend
-   - Search for "button-card" 
-   - Install and reload
+1. **Home Assistant 2024.10 or later** (tested on 2026.11.0)
+2. **button-card** from Marketplace
+   - Settings → Devices & services → Add-ons
+   - Click **Marketplace** (bottom right)
+   - Search for "button-card"
+   - Install and restart
 
 ### Optional
 - **kiosk-mode** – Hides Home Assistant header bar (recommended for tablets)
@@ -24,11 +25,11 @@ This installation includes safety-critical garage door handling. Read the entire
 
 If you don't already have it:
 
-1. Go to **HACS** → **Frontend**
-2. Click **Explore & Download Repositories**
+1. Go to **Settings** → **Devices & services** → **Add-ons**
+2. Click **Marketplace** (bottom right corner)
 3. Search for **"Lovelace Button card"** by RomRider
-4. Click **Download** → **Download**
-5. **Restart Home Assistant** or reload browser
+4. Click **Install**
+5. **Restart Home Assistant**
 
 ### 2. Copy motor.js
 

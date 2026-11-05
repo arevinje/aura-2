@@ -18,8 +18,8 @@ An English translation is available with customized entity configuration. This v
 ### Installation
 
 1. **Requirements**
-   - Home Assistant 2024.10 or later
-   - [button-card](https://github.com/custom-cards/button-card) from HACS
+   - Home Assistant 2024.10 or later (tested on 2026.11.0)
+   - [button-card](https://github.com/custom-cards/button-card) from Marketplace
 
 2. **Quick Start**
    ```bash

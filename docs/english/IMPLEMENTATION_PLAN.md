@@ -123,8 +123,8 @@ Do NOT include risky automations:
 ## Dependencies Verification
 
 ### Required (from upstream README)
-- button-card via HACS
-- Home Assistant 2024.10+
+- button-card via Marketplace (HA 2026.11) or HACS
+- Home Assistant 2024.10+ (tested on 2026.11.0)
 
 ### Optional (check actual usage in motor.js)
 - Music Assistant (iframe party mode)

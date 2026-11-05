@@ -160,11 +160,12 @@ Fra `/opt/cursor/artifacts/`:
 
 ### 2. Installer button-card
 
-Via HACS:
-1. HACS → Frontend
-2. Søk "button-card"
-3. Installer
-4. Start Home Assistant på nytt
+Via Marketplace (HA 2026.11):
+1. Innstillinger → Enheter og tjenester → Tillegg
+2. Klikk **Marketplace** (nederst til høyre)
+3. Søk "button-card"
+4. Installer
+5. Start Home Assistant på nytt
 
 ### 3. Kopier motor.js
 

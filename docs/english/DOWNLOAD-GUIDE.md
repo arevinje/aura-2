@@ -42,10 +42,11 @@ cd /workspace/www/aura/
 
 ### Phase 2: Install button-card (3 minutes)
 1. Open Home Assistant
-2. HACS → Frontend
-3. Search "button-card"
-4. Install
-5. Restart Home Assistant
+2. Settings → Devices & services → Add-ons
+3. Click Marketplace (bottom right)
+4. Search "button-card"
+5. Install
+6. Restart Home Assistant
 
 ### Phase 3: Copy Files (2 minutes)
 1. Using File Editor, Samba, or SSH
@@ -127,7 +128,7 @@ Total time: ~25 minutes
 - [ ] Opened test-offline.html - all tests pass
 
 ### Installation
-- [ ] button-card installed via HACS
+- [ ] button-card installed via Marketplace (HA 2026.11)
 - [ ] Home Assistant restarted
 - [ ] motor.js copied to /config/www/aura/motor.js
 - [ ] Verified /local/aura/motor.js accessible
@@ -240,7 +241,7 @@ _portar_auto: false        # Disabled - do NOT change
 3. Read INSTALL-ENGLISH.md
 
 ### Short-term (Today)
-1. Install button-card via HACS
+1. Install button-card via Marketplace (HA 2026.11)
 2. Copy motor.js to HA
 3. Create test dashboard
 4. Verify functionality
